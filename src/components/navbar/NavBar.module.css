@@ -1,0 +1,174 @@
+.nav-container {
+  max-width: 100vw;
+  height: 8.4rem;
+  background-color: #10316b;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10rem;
+
+  padding: 0 10px 0 10px;
+}
+
+.logo-input-container {
+  display: flex;
+
+  height: 100%;
+  flex-basis: 40%;
+  min-width: 65rem;
+
+  align-items: center;
+  justify-content: flex-start;
+  gap: 3.6rem;
+}
+
+.logo-container {
+  height: 100%;
+  cursor: pointer;
+}
+
+.logo-container img {
+  width: auto;
+  height: 100%;
+}
+
+.search_bar-container {
+  flex-grow: 1;
+
+  position: relative;
+}
+
+.search_bar-input {
+  width: 100%;
+
+  padding: 10px 10px;
+  background-color: #fff;
+
+  font-size: 1.4rem;
+  font-style: inherit;
+  /* color: white; */
+
+  border-radius: 10px;
+
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.search_bar-input::placeholder {
+  color: #aaa;
+}
+
+.search_bar-input:focus {
+  outline: none;
+}
+
+.icon-container_sticky {
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform: translate(100%, 0);
+
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: #eee;
+  border-radius: 10px;
+
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+
+  padding: 0 1.2rem 0 1.2rem;
+  cursor: pointer;
+
+  transition: all 0.1s;
+}
+
+.icon-container_sticky:hover {
+  background-color: #ddd;
+}
+
+.icon_search {
+  height: 60%;
+  width: auto;
+  color: black;
+}
+
+.nav_links-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 100%;
+
+  list-style: none;
+
+  margin: 0;
+  padding-right: 4.8rem;
+  gap: 2.4rem;
+}
+
+.nav_link:link,
+.nav_link:active,
+.nav_link:visited {
+  display: block;
+
+  padding: 1rem 2rem;
+  border-radius: 4px;
+
+  background-color: #405a89;
+
+  text-decoration: none;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #eee;
+
+  transition: all 0.3s;
+}
+
+.nav_link__signup:link,
+.nav_link__signup:active,
+.nav_link__signup:visited {
+  background-color: #7083a6;
+}
+
+.nav_link:hover {
+  color: #ddd;
+  background-color: #586f97;
+}
+
+.icon-container_setting {
+  background-color: #405a89;
+  border-radius: 4px;
+
+  padding: 0.8rem 1.2rem;
+
+  cursor: pointer;
+
+  transition: all 0.3s;
+}
+
+.icon-container_setting .icon_setting {
+  transform: rotate(0);
+  transition: all 0.5s;
+}
+
+.icon-container_setting:hover .icon_setting {
+  transform: rotate(-90deg);
+}
+
+.icon-container_setting:hover {
+  background-color: #586f97;
+}
+
+.icon_setting {
+  color: #eee;
+}
+
+.icon_setting:hover {
+  color: #ddd;
+  background-color: #586f97;
+}

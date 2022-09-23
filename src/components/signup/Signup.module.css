@@ -1,0 +1,53 @@
+.signup-container {
+  /* background-color: pink; */
+
+  max-width: 100rem;
+  margin: 8rem auto;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.description-container {
+  width: 35%;
+}
+
+.description_title-text {
+  color: #444;
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: -1px;
+}
+
+.description_content-text {
+  margin-top: 1.8rem;
+
+  color: #444;
+  font-size: 1.4rem;
+  line-height: 1.6;
+}
+
+.general_link-container {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+
+  margin-top: 4.8rem;
+}
+
+.general_link-container img {
+  width: 4rem;
+  height: auto;
+}
+
+.nav_link:link,
+.nav_link:visited,
+.nav_link:active {
+  color: #10316b;
+  font-size: 1.6rem;
+}
+
+.nav_link:hover {
+  color: #405a89;
+}
