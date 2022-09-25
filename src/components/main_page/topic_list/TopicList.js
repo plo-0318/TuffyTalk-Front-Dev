@@ -9,7 +9,7 @@ const OTHERS = ['Psychology', 'Accounting', 'Art'];
 
 const TopicList = () => {
   return (
-    <nav className={`${classes['main-container']}`}>
+    <nav className={`${classes['main-container']} `}>
       <div className={classes['topic-container']}>
         <ul className={classes['topic_list-container']}>
           {GENERAL.map((topic) => (

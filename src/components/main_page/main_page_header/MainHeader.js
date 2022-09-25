@@ -21,7 +21,7 @@ const MainHeader = (props) => {
 
   return (
     <div
-      className={`${commonClasses['main-container']} ${classes['header__main-container']}`}
+      className={`${commonClasses['main-container']} ${commonClasses['center-margin_bottom']} ${classes['header__main-container']}`}
     >
       <header className={classes['header-container']}>
         <div className={classes['header__title-container']}>

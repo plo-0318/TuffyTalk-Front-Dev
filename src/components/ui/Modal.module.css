@@ -1,0 +1,174 @@
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+
+  z-index: 4;
+}
+
+.backdrop-open {
+  animation: openBackdrop 0.4s linear forwards;
+}
+
+.backdrop-close {
+  animation: closeBackdrop 0.4s linear forwards;
+}
+
+@keyframes openBackdrop {
+  from {
+    background-color: rgba(0, 0, 0, 0);
+  }
+
+  to {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+}
+
+@keyframes closeBackdrop {
+  from {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+
+  to {
+    background-color: rgba(0, 0, 0, 0);
+  }
+}
+
+.modal-container {
+  background-color: rgb(250, 250, 250);
+  min-width: 30rem;
+  max-width: 50rem;
+  border-radius: 10px;
+  box-sizing: border-box;
+  box-shadow: 0 0 10px 6px rgba(0, 0, 0, 0.1);
+
+  position: fixed;
+  top: 2.4rem;
+  left: 50%;
+  z-index: 5;
+  padding-bottom: 1.2rem;
+
+  transform: translateX(-50%);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.6rem;
+
+  overflow: hidden;
+}
+
+.status-container {
+  width: 100%;
+  background-image: linear-gradient(#51cf66, #40c057);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0.6rem 0.6rem;
+}
+
+.status-container__fail {
+  background-image: linear-gradient(#f03e3e, #c92a2a);
+}
+
+.status-icon {
+  width: 3rem;
+  height: 3em;
+  color: #eee;
+}
+
+.modal-container p {
+  text-align: center;
+  font-size: 2.4rem;
+  font-weight: 600;
+  color: #333;
+
+  padding: 0 2.4rem;
+}
+
+.button-container {
+  display: block;
+
+  margin: 1.2rem auto 0 auto;
+  padding: 0.6rem 1.2rem;
+  border-radius: 30px;
+
+  background-color: #40c057;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* gap: .6rem; */
+}
+
+.button-container:hover {
+  background-color: #51cf66;
+}
+
+.button-container__fail {
+  background-color: #f03e3e;
+}
+
+.button-container__fail:hover {
+  background-color: #c92a2a;
+}
+
+.button-container p {
+  font-size: 1.2rem;
+  color: #eee;
+}
+
+.button-icon {
+  width: 2rem;
+  height: 2rem;
+  color: #eee;
+}
+
+.modal-open {
+  animation: openModal 0.4s ease-out forwards;
+}
+
+.modal-close {
+  animation: closeModal 0.4s ease-out forwards;
+}
+
+@keyframes openModal {
+  0% {
+    opacity: 1;
+    top: -17rem;
+  }
+
+  50% {
+    opacity: 1;
+    top: 6rem;
+  }
+
+  100% {
+    opacity: 1;
+    top: 2.4rem;
+  }
+}
+
+@keyframes closeModal {
+  0% {
+    opacity: 1;
+    top: 2.4rem;
+  }
+
+  50% {
+    opacity: 1;
+    top: 6rem;
+  }
+
+  100% {
+    opacity: 1;
+    top: -17rem;
+  }
+}

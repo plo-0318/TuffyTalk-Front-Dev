@@ -1,0 +1,244 @@
+.form-container {
+  width: 40%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  /* background-color: pink; */
+}
+
+.title-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+
+  padding: 2.4rem 1.2rem;
+}
+
+.title-container p {
+  font-size: 2.6rem;
+  font-weight: 700;
+  letter-spacing: -1px;
+  color: #0d2756;
+}
+
+.title-container hr {
+  border-top: 1.2px solid rgba(153, 153, 153, 0.35);
+  width: 80%;
+}
+
+.inputs-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.8rem;
+
+  width: 100%;
+
+  padding: 0 3.6rem 2.4rem 3.6rem;
+  /* margin-top: 0.8rem; */
+}
+
+.input_item-container {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+
+  width: 100%;
+  margin-top: 2.8rem;
+}
+
+.input_item-container p {
+  margin-top: 0.6rem;
+
+  font-size: 1.2rem;
+  color: #e03131;
+}
+
+.input_item-container label {
+  font-size: 1.6rem;
+  color: #333;
+}
+
+.input_item-container input {
+  width: 100%;
+
+  background-color: rgb(250, 250, 250);
+  border: none;
+  border-bottom: 1px solid #888;
+
+  padding-bottom: 1rem;
+
+  font-size: 1.4rem;
+}
+
+.input_item-container input.input_error,
+.input_item-container input:focus.input_error {
+  border-bottom: 1px solid #e03131;
+}
+
+.input_item-container input::placeholder {
+  font-size: 1.4rem;
+}
+
+.input_item-container input:focus {
+  outline: none;
+  border-bottom: 1.6px solid #586f97;
+}
+
+.input_item-container input:focus::placeholder {
+  color: transparent;
+}
+
+#username-input:focus-within::before {
+  position: absolute;
+  top: -2rem;
+  left: 0;
+
+  display: block;
+  content: 'Your username';
+
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+
+  background-color: #f3ec78;
+  background-image: linear-gradient(45deg, #28467a, #0b224b);
+  background-size: 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -moz-text-fill-color: transparent;
+}
+
+#email-input:focus-within::before {
+  position: absolute;
+  top: -2rem;
+  left: 0;
+
+  display: block;
+  content: 'Your email';
+
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+
+  background-color: #f3ec78;
+  background-image: linear-gradient(45deg, #28467a, #0b224b);
+  background-size: 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -moz-text-fill-color: transparent;
+}
+
+#password-input:focus-within::before {
+  position: absolute;
+  top: -2rem;
+  left: 0;
+
+  display: block;
+  content: 'Your password';
+
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+
+  background-color: #f3ec78;
+  background-image: linear-gradient(45deg, #28467a, #0b224b);
+  background-size: 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -moz-text-fill-color: transparent;
+}
+
+#password_confirm-input:focus-within::before {
+  position: absolute;
+  top: -2rem;
+  left: 0;
+
+  display: block;
+  content: 'Confirm your password';
+
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+
+  background-color: #f3ec78;
+  background-image: linear-gradient(45deg, #28467a, #0b224b);
+  background-size: 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -moz-text-fill-color: transparent;
+}
+
+.form_submit_btn-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 3.6rem 3.6rem 2.4rem 3.6rem;
+
+  width: 100%;
+}
+
+.form_submit-btn {
+  border: none;
+  background-color: #405a89;
+  width: 100%;
+
+  padding: 1.2rem 2.4rem;
+  border-radius: 30px;
+  cursor: pointer;
+
+  color: rgb(250, 250, 250);
+  font-size: 2.4rem;
+
+  transition: all 0.3s;
+}
+
+.form_submit-btn:hover {
+  background-color: #586f97;
+}
+
+.form_submit-btn__disable,
+.form_submit-btn__disable:hover {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+.sign_in-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.8rem;
+
+  width: 100%;
+
+  padding: 1.2rem 3.6rem;
+}
+
+.sign_in-container p {
+  font-size: 1.4rem;
+  color: #666;
+}
+
+.sign_in-link:link,
+.sign_in-link:visited,
+.sign_in-link:active {
+  color: #10316b;
+  font-size: 1.4rem;
+}
+
+.sign_in-link:hover {
+  color: #405a89;
+}

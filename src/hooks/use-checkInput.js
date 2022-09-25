@@ -1,20 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 // {validate: fn, msg: 'wrong email format'}
 
-const useCheckInput = (validateArr) => {
+const useCheckInput = (validateArr, submitValidate = null) => {
   const [input, setInput] = useState('');
   const [isTouched, setIsTouched] = useState(false);
-  const [error, setError] = useState(null);
+  const [isSubmit, setIsSubmit] = useState(false);
+  let error = null;
 
   if (isTouched) {
-    setError(null);
-
     for (let val of validateArr) {
       const { validate, msg } = val;
 
       if (!validate(input)) {
-        setError(msg);
+        error = msg;
+        // setError(msg);
+        // setIsTouched(false);
         break;
       }
     }
@@ -24,6 +25,14 @@ const useCheckInput = (validateArr) => {
 
   const inputChangeHandler = (e) => {
     setInput(e.target.value);
+
+    if (!isTouched) {
+      setIsTouched(true);
+    }
+
+    if (isSubmit) {
+      setIsSubmit(false);
+    }
   };
 
   const inputBlurHandler = (e) => {
@@ -32,11 +41,12 @@ const useCheckInput = (validateArr) => {
 
   return {
     input,
-    isTouched,
     inputChangeHandler,
     inputBlurHandler,
     error,
     isValid,
+    isSubmit,
+    setIsSubmit,
   };
 };
 

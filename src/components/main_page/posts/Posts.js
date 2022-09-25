@@ -84,7 +84,7 @@ const DUMMY = [
 const Posts = (props) => {
   return (
     <article
-      className={`${commonClasses['main-container']} ${classes['posts-container']}`}
+      className={`${commonClasses['main-container']} ${commonClasses['center-margin_bottom']} ${classes['posts-container']}`}
     >
       {DUMMY.map((post) => (
         <PostItem key={post.username} post={post} />

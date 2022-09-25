@@ -1,14 +1,20 @@
 .main-container {
   max-width: 80rem;
 
-  margin-left: auto;
+  /* margin-left: auto;
   margin-right: auto;
-  margin-bottom: 1.4rem;
+  margin-bottom: 1.4rem; */
 
   background-color: rgb(250, 250, 250);
   box-shadow: 0 0 5px 1.5px rgba(0, 0, 0, 0.1);
 
   border-radius: 6px;
+}
+
+.center-margin_bottom {
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1.4rem;
 }
 
 .background-container {

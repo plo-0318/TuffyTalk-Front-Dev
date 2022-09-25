@@ -6,7 +6,7 @@
 
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 
 .description-container {
@@ -14,7 +14,7 @@
 }
 
 .description_title-text {
-  color: #444;
+  color: #0d2756;
   font-size: 3rem;
   font-weight: 700;
   letter-spacing: -1px;

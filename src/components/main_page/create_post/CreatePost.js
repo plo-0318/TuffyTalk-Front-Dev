@@ -5,7 +5,7 @@ import userImage from '../../../img/placeholder/user-placeholder.png';
 const CreatePost = () => {
   return (
     <div
-      className={`${commonClasses['main-container']} ${classes['create_post__main-container']}`}
+      className={`${commonClasses['main-container']} ${commonClasses['center-margin_bottom']} ${classes['create_post__main-container']}`}
     >
       <div className={classes['create_post-container']}>
         <img src={userImage} alt='User' />
