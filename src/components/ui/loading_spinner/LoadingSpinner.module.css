@@ -1,0 +1,27 @@
+.spinner {
+  width: 4.2rem;
+  height: 4.2rem;
+
+  border-radius: 50%;
+  background-color: transparent;
+
+  border: 3px solid #10316b;
+  border-color: transparent;
+  border-left-color: #10316b;
+
+  animation: spinnerSpin 0.75s linear forwards;
+  animation-iteration-count: infinite;
+}
+
+@keyframes spinnerSpin {
+  from {
+    border-color: transparent;
+    border-left-color: #10316b;
+  }
+
+  to {
+    transform: rotate(-360deg);
+    border-color: transparent;
+    border-left-color: #10316b;
+  }
+}

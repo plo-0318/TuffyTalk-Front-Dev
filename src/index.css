@@ -11,11 +11,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; */
 
-  margin: 0;
+  /* margin: 0;
   min-height: 100vh;
   display: flex;
   flex-flow: column;
-  background-color: #cfd6e1;
+  background-color: #cfd6e1; */
 }
 
 * {

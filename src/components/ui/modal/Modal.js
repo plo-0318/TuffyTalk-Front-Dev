@@ -6,7 +6,7 @@ import { UilTimesCircle } from '@iconscout/react-unicons';
 import { UilTimes } from '@iconscout/react-unicons';
 
 import classes from './Modal.module.css';
-import commonClasses from '../../utils/common.module.css';
+import commonClasses from '../../../utils/common.module.css';
 
 const Backdrop = (props) => {
   return (
@@ -24,7 +24,10 @@ const Backdrop = (props) => {
         appearActive: '',
       }}
     >
-      <div className={classes['backdrop']} onClick={props.onConfirm}></div>
+      <div
+        className={classes['modal_backdrop']}
+        onClick={props.onConfirm}
+      ></div>
     </CSSTransition>
   );
 };

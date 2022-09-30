@@ -167,7 +167,7 @@ const SigninForm = () => {
       <div className={signinClasses['sign_up-container']}>
         <hr />
         <p>New to Tuffy Talk ?</p>
-        <NavLink className={signinClasses['sign_up-link']} to='/signin'>
+        <NavLink className={signinClasses['sign_up-link']} to='/signup'>
           Create an account
         </NavLink>
       </div>

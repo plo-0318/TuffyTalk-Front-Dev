@@ -10,7 +10,7 @@ import reportWebVitals from './reportWebVitals';
 import './index.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
+/* root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Provider store={store}>
@@ -18,6 +18,14 @@ root.render(
       </Provider>
     </BrowserRouter>
   </React.StrictMode>
+); */
+
+root.render(
+  <BrowserRouter>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </BrowserRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function

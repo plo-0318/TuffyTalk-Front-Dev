@@ -1,0 +1,13 @@
+.app-container {
+  margin: 0;
+  min-height: 100vh;
+
+  display: flex;
+  flex-flow: column;
+  background-color: #cfd6e1;
+}
+
+.disable_scroll {
+  height: 100vh;
+  overflow: hidden;
+}

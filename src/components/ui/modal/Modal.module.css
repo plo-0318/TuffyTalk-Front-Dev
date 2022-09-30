@@ -1,4 +1,4 @@
-.backdrop {
+.modal_backdrop {
   position: fixed;
   top: 0;
   left: 0;
@@ -6,7 +6,7 @@
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.7);
 
-  z-index: 4;
+  z-index: 6;
 }
 
 .backdrop-open {
@@ -48,7 +48,7 @@
   position: fixed;
   top: 2.4rem;
   left: 50%;
-  z-index: 5;
+  z-index: 7;
   padding-bottom: 1.2rem;
 
   transform: translateX(-50%);

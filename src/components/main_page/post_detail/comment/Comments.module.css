@@ -1,0 +1,39 @@
+.comments-container {
+  background-color: #e7eaf0;
+  padding: 5.6rem 4.8rem;
+
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  gap: 1.2rem;
+}
+
+.comments-title {
+  font-size: 2rem;
+  color: #888;
+
+  margin-bottom: 1.2rem;
+}
+
+.comments__titile_divider {
+  margin: 0;
+  width: 100%;
+}
+
+.no_comments-container {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 4.8rem 1.2rem 0 1.2rem;
+}
+
+.no_comments-container > p {
+  font-size: 1.8rem;
+  color: #666;
+}

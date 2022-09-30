@@ -10,6 +10,11 @@
   gap: 10rem;
 
   padding: 0 10px 0 10px;
+
+  /* position: sticky;
+  top: 0;
+
+  z-index: 1; */
 }
 
 .logo-input-container {

@@ -25,17 +25,17 @@
   height: 100%;
 }
 
-.topic_img-container img {
+.topic_img-container > img {
   height: 100%;
 
   width: auto;
 }
 
-.header__title-container p {
+.header__title-container > p {
   color: #444;
   font-size: 3.6rem;
   font-weight: 700;
-  letter-spacing: -2px;
+  letter-spacing: -1px;
 }
 
 .header__tabs-container {

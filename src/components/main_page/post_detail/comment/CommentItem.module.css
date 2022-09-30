@@ -1,0 +1,158 @@
+.comment_item-container {
+  width: 100%;
+
+  padding: 0 2.4rem;
+  margin-top: 1.2rem;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 1.2rem;
+
+  margin-bottom: 3.6rem;
+}
+
+.comment_header-container {
+  height: 3rem;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 1rem;
+}
+
+.comment_header-container .left {
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.left img {
+  height: 100%;
+  width: auto;
+  border-radius: 50%;
+}
+
+.left p {
+  font-size: 1.6rem;
+  color: #444;
+}
+
+.comment_header-container .right {
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.comment_icon {
+  height: 2.4rem;
+  width: 2.4rem;
+
+  color: #28467a;
+  cursor: pointer;
+}
+
+.comment_icon:hover {
+  color: #586f97;
+}
+
+.right p {
+  font-size: 1.2rem;
+  color: #777;
+}
+
+.comment_content {
+  font-size: 1.6rem;
+  line-height: 2.2rem;
+  color: #333;
+  white-space: pre-wrap;
+
+  padding: 0 0.6rem;
+
+  margin-bottom: 1.6rem;
+}
+
+.comment_footer-container {
+  width: 100%;
+  margin-bottom: 1.2rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 0.6rem;
+}
+
+.comment_footer-container p {
+  font-size: 1.2rem;
+  color: #555;
+}
+
+.comment_footer-container button {
+  background-color: none;
+  border: none;
+
+  cursor: pointer;
+
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #28467a;
+
+  transition: all 0.3s;
+}
+
+.comment_footer-container button:hover {
+  color: #586f97;
+}
+
+.bottom {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+
+  padding: 0 0.6rem;
+}
+
+.bottom__divider {
+  width: 3rem;
+
+  border-top: 1px solid #bbb;
+}
+
+.bottom button {
+  background-color: transparent;
+  border: none;
+
+  cursor: pointer;
+
+  font-size: 1.4rem;
+  color: #28467a;
+}
+
+.bottom button:hover {
+  color: #7083a6;
+}
+
+.child_comments-container {
+  width: 95%;
+
+  margin-top: 1.8rem;
+  margin-left: auto;
+  margin-right: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 2.8rem;
+}
+
+.comment_item__divider {
+  width: 100%;
+  border-top: 1px solid #586f97;
+  opacity: 0.15;
+}
