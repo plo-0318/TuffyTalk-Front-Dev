@@ -1,10 +1,8 @@
 import { useState, memo } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import {
-  transformTopicText,
-  transformParamTopicText,
-} from '../../../utils/util';
+import { camelToSpace, toCamel } from '../../../utils/util';
+import { RESOURCE_URL } from '../../../utils/config';
 
 import classes from './MainHeader.module.css';
 import commonClasses from '../../../utils/common.module.css';
@@ -13,7 +11,7 @@ import topicImage from '../../../img/placeholder/topic-placeholder.png';
 const MainHeader = (props) => {
   const location = useLocation();
   const paramTopic = location.pathname.split('/')[2];
-  const topic = transformTopicText(transformParamTopicText(paramTopic));
+  const topic = camelToSpace(toCamel(paramTopic, '-'));
 
   const [selectedTab, setSelectedTab] = useState('hot');
 
@@ -36,7 +34,14 @@ const MainHeader = (props) => {
       <header className={classes['header-container']}>
         <div className={classes['header__title-container']}>
           <div className={classes['topic_img-container']}>
-            <img src={topicImage} alt='topic' />
+            <img
+              src={
+                props.topic
+                  ? `${RESOURCE_URL}/img/topics/${props.topic.icon}`
+                  : topicImage
+              }
+              alt='topic'
+            />
           </div>
           <p>{topic}</p>
         </div>

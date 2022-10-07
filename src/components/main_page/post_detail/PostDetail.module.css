@@ -124,6 +124,34 @@
   color: #7083a6;
 }
 
+.post_footer__icon__inactive {
+  color: #28467a82;
+}
+
+.post_footer__icon__inactive:hover {
+  color: #7083a6;
+}
+
+/* .post_footer__icon_bookmark {
+  height: var(--footer-container-height);
+  width: var(--footer-container-height);
+  color: #28467a;
+
+  cursor: pointer;
+}
+
+.post_footer__icon_bookmark:hover {
+  color: #aaa;
+}
+
+.post_footer__icon_bookmark__inactive {
+  color: #aaa;
+}
+
+.post_footer__icon_bookmark__inactive:hover {
+  color: #28467a;
+} */
+
 .post_footer-container p {
   font-size: 1.4rem;
   color: #333;

@@ -25,6 +25,14 @@ const httpReducer = (currentState, action) => {
     };
   }
 
+  if (action.type === 'RESET') {
+    return {
+      status: action.status,
+      data: null,
+      error: null,
+    };
+  }
+
   return currentState;
 };
 
@@ -52,7 +60,11 @@ const useHttp = (requestFn, startWithPending = true) => {
     [requestFn]
   );
 
-  return { sendRequest, ...httpState };
+  const resetState = useCallback(() => {
+    dispatch({ type: 'RESET', status: startWithPending ? 'pending' : null });
+  }, [startWithPending]);
+
+  return { sendRequest, ...httpState, resetState };
 };
 
 export default useHttp;

@@ -18,3 +18,50 @@
   font-size: 1.8rem;
   color: #333;
 }
+
+.page_btns-container {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+
+  padding-bottom: 2.4rem;
+}
+
+.page_btn {
+  background-color: #ddd;
+  border: none;
+  padding: 1rem 1rem;
+  border-radius: 50%;
+  width: 2.6rem;
+  height: 2.6rem;
+
+  cursor: pointer;
+
+  font-size: 1.6rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: all 0.3s;
+}
+
+.page_btn:hover {
+  background-color: #ccc;
+}
+
+.page_btn__active {
+  background-color: #405a89;
+  color: rgb(250, 250, 250);
+}
+
+.page_btn__active:hover {
+  background-color: #7083a6;
+}
+
+.elipses {
+  font-size: 1.6rem;
+}

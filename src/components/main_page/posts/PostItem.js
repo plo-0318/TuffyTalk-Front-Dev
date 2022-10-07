@@ -3,8 +3,11 @@ import { useDispatch } from 'react-redux';
 
 import { mainPageScrollActions } from '../../../store/mainPageScroll';
 
-import { UilThumbsUp } from '@iconscout/react-unicons';
-import { UilCommentDots } from '@iconscout/react-unicons';
+import {
+  UilThumbsUp,
+  UilCommentDots,
+  UilBookmark,
+} from '@iconscout/react-unicons';
 
 import classes from './PostItem.module.css';
 import userImg from '../../../img/placeholder/user-placeholder.png';
@@ -31,7 +34,7 @@ const PostItem = (props) => {
     content: props.post.content,
     createdAt: new Date(props.post.createdAt).toLocaleDateString(),
     likes: props.post.likes,
-    comments: props.post.numComments,
+    comments: props.post.comments.length,
     postImg,
     id: props.post._id,
   };
@@ -61,9 +64,12 @@ const PostItem = (props) => {
           <p className={classes['content-text']}>{post.content}</p>
           <div className={classes['footer-container']}>
             <UilThumbsUp className={classes['footer-icon']} />
-            <p>{post.likes}</p>
+            <p>{post.likes.length}</p>
             <UilCommentDots className={classes['footer-icon']} />
             <p>{post.comments}</p>
+            {props.bookmark && (
+              <UilBookmark className={classes['footer-icon']} />
+            )}
           </div>
         </div>
         {post.postImg && (

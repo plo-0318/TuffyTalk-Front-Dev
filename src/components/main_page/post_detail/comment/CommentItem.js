@@ -24,7 +24,7 @@ const CommentContent = (props) => {
         </div>
         <div className={classes['right']}>
           <UilThumbsUp className={classes['comment_icon']} />
-          <p>{props.comment.likes}</p>
+          <p>{props.comment.likes.length}</p>
         </div>
       </div>
 
@@ -83,6 +83,7 @@ const CommentItem = (props) => {
           </button>
         </div>
       )}
+
       {displayChildComments && (
         <div className={classes['child_comments-container']}>
           {childCommentData.map((comment) => (

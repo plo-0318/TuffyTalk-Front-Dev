@@ -1,0 +1,55 @@
+.user_info-container {
+  padding: 4.8rem 4.8rem;
+  padding-top: 9.6rem;
+}
+
+.user_info_header-container {
+}
+
+.form_label {
+  display: block;
+
+  font-size: 1.4rem;
+  color: #555;
+
+  transform: translateX(4px);
+}
+
+.user_info_header-container > p {
+  font-size: 3.6rem;
+  letter-spacing: -0.5px;
+  font-weight: 600;
+  color: #405a89;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3.6rem;
+
+  margin-top: 4.8rem;
+}
+
+.form_submit-btn {
+  background-color: #10316b;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+
+  color: #eee;
+  font-size: 1.6rem;
+  padding: 1.2rem 2.4rem;
+  margin-top: 2.4rem;
+
+  transition: all 0.3s;
+}
+
+.form_submit-btn:hover {
+  background-color: #405a89;
+}
+
+.form_submit-btn:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}

@@ -1,16 +1,20 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useState, memo } from 'react';
 import ReactDOM from 'react-dom';
 import { NavLink, useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { mainPageScrollActions } from '../../../store/mainPageScroll';
 
 import Comments from './comment/Comments';
 import useHttp from '../../../hooks/use-http';
 import { fetchData } from '../../../utils/sendHttp';
 import LoadingSpinner from '../../ui/loading_spinner/LoadingSpinner';
+import { authActions } from '../../../store/auth';
 
-import { UilThumbsUp } from '@iconscout/react-unicons';
-import { UilCommentDots } from '@iconscout/react-unicons';
+import {
+  UilThumbsUp,
+  UilCommentDots,
+  UilBookmark,
+} from '@iconscout/react-unicons';
 import classes from './PostDetail.module.css';
 
 import userImg from '../../../img/placeholder/user-placeholder.png';
@@ -18,8 +22,24 @@ import userImg from '../../../img/placeholder/user-placeholder.png';
 const Backdrop = (props) => {
   const dispatch = useDispatch();
 
+  const { sendRequest: toggleLikePost } = useHttp(fetchData);
+
   const backdropClickHandler = () => {
     dispatch(mainPageScrollActions.setDisableScroll(false));
+
+    if (props.userLikePostChanged) {
+      const submitOptions = {
+        path: `/user-actions/toggle-like-post/${props.postId}`,
+        useProxy: true,
+        options: {
+          method: 'PATCH',
+          credentials: 'include',
+        },
+      };
+
+      toggleLikePost(submitOptions);
+    }
+
     props.onBackdropClick();
   };
 
@@ -31,26 +51,127 @@ const Backdrop = (props) => {
   );
 };
 
-const PostModal = (props) => {
-  const { postId } = props;
+const PostModal = memo((props) => {
+  const { postId, setUserLikeChanged } = props;
 
-  const { sendRequest, data: postData, status, error } = useHttp(fetchData);
+  const {
+    sendRequest: fetchPostDetail,
+    data: postData,
+    status: postStatus,
+    error: postError,
+  } = useHttp(fetchData);
+
+  const {
+    sendRequest: toggleBookmark,
+    data: userData,
+    status: toggleBookmarkStatus,
+    error: toggleBookmarkError,
+    resetState: resetToggleBookmark,
+  } = useHttp(fetchData, false);
+
   const [updatedPostData, setUpdatedPostData] = useState(false);
+  const [userBookmark, setUserBookmark] = useState(false);
+  const [userLike, setUserLike] = useState(null);
+  const [postLikes, setPostLikes] = useState(0);
 
-  useEffect(() => {
-    sendRequest({ path: `/posts/${postId}`, useProxy: false });
-  }, [sendRequest, postId]);
+  const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
 
+  // Check if user has bookmarked this page
   useEffect(() => {
-    if (status === 'completed' && !error) {
+    if (user) {
+      const hasBookmark = user.bookmarks.includes(postId);
+
+      if (userBookmark === hasBookmark) {
+        return;
+      }
+
+      setUserBookmark(hasBookmark);
+    }
+  }, [user, postId, userBookmark]);
+
+  // Update the page after user toggled bookmark
+  useEffect(() => {
+    if (toggleBookmarkStatus === 'completed' && !toggleBookmarkError) {
+      setUserBookmark((prevState) => !prevState);
+
+      const updatedUser = { ...userData };
+
+      resetToggleBookmark();
+      dispatch(authActions.setUser(updatedUser));
+    }
+  }, [
+    toggleBookmarkStatus,
+    resetToggleBookmark,
+    toggleBookmarkError,
+    userData,
+    dispatch,
+  ]);
+
+  // Load the post detail and comments from backend
+  useEffect(() => {
+    fetchPostDetail({ path: `/posts/${postId}`, useProxy: false });
+  }, [fetchPostDetail, postId]);
+
+  // After successfuly fetched post detail
+  // Format the post create time
+  // Use the plcaeholder user profile pic
+  // Then allow render
+  useEffect(() => {
+    if (postStatus === 'completed' && !postError) {
       postData.author.profilePicture = userImg;
       postData.createdAt = new Date(postData.createdAt).toLocaleDateString();
 
+      setPostLikes(postData.likes.length);
+
+      if (user) {
+        const userLikedPost = postData.likes.includes(user._id);
+        setUserLike(userLikedPost);
+      }
+
       setUpdatedPostData(true);
     }
-  }, [status, error, postData]);
+  }, [postStatus, postError, postData, user]);
 
-  const readyToRender = status === 'completed' && updatedPostData;
+  // Check if user has changed like post or not
+  useEffect(() => {
+    if (postStatus === 'completed' && userLike !== null) {
+      const chagned = userLike !== postData.likes.includes(user._id);
+
+      setUserLikeChanged(chagned);
+    }
+  }, [postStatus, userLike, postData, user, setUserLikeChanged]);
+
+  const readyToRender = postStatus === 'completed' && updatedPostData;
+
+  const bookmarkClickHandler = () => {
+    if (toggleBookmarkStatus === 'pending') {
+      return;
+    }
+
+    const fetchOptions = {
+      path: '/user-actions/toggle-bookmark',
+      useProxy: true,
+      options: {
+        method: 'PATCH',
+        credentials: 'include',
+        body: JSON.stringify({ postId }),
+        headers: { 'Content-Type': 'application/json' },
+      },
+    };
+
+    toggleBookmark(fetchOptions);
+  };
+
+  const postLikeClickHandler = () => {
+    if (!userLike) {
+      setPostLikes((prevState) => prevState + 1);
+    } else {
+      setPostLikes((prevState) => prevState - 1);
+    }
+
+    setUserLike((prevState) => !prevState);
+  };
 
   return (
     <div className={`${classes['post_modal-container']}`}>
@@ -80,13 +201,28 @@ const PostModal = (props) => {
 
             <div className={classes['post_footer-container']}>
               <UilThumbsUp
-                className={`${classes['post_footer__icon']} ${classes['post_footer__icon_heart']}`}
+                className={
+                  userLike
+                    ? classes['post_footer__icon']
+                    : `${classes['post_footer__icon']} ${classes['post_footer__icon__inactive']}`
+                }
+                onClick={postLikeClickHandler}
               />
-              <p>{postData.likes}</p>
+              <p>{postLikes}</p>
+
               <UilCommentDots
-                className={`${classes['post_footer__icon']} ${classes['post_footer__icon_comment']}`}
+                className={`${classes['post_footer__icon']} ${classes['post_footer__icon__inactive']}`}
               />
-              <p>{postData.numComments}</p>
+              <p>{postData.comments.length}</p>
+
+              <UilBookmark
+                className={
+                  userBookmark
+                    ? classes['post_footer__icon']
+                    : `${classes['post_footer__icon']} ${classes['post_footer__icon__inactive']}`
+                }
+                onClick={bookmarkClickHandler}
+              />
             </div>
           </div>
 
@@ -97,21 +233,29 @@ const PostModal = (props) => {
       )}
     </div>
   );
-};
+});
 
 const PostDetail = (props) => {
   const location = useLocation();
+  const [userLikePostChanged, setUserLikePostChanged] = useState(false);
 
   const postId = location.pathname.split('/').at(-1);
 
   return (
     <Fragment>
       {ReactDOM.createPortal(
-        <Backdrop onBackdropClick={props.onBackdropClick} />,
+        <Backdrop
+          onBackdropClick={props.onBackdropClick}
+          userLikePostChanged={userLikePostChanged}
+          postId={postId}
+        />,
         document.getElementById('backdrop-root')
       )}
       {ReactDOM.createPortal(
-        <PostModal postId={postId} />,
+        <PostModal
+          postId={postId}
+          setUserLikeChanged={setUserLikePostChanged}
+        />,
         document.getElementById('overlay-root')
       )}
     </Fragment>

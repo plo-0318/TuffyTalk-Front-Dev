@@ -13,26 +13,28 @@ import LoadingSpinner from '../ui/loading_spinner/LoadingSpinner';
 import classes from './MainPage.module.css';
 
 const MainPage = (props) => {
-  const [topicId, setTopicId] = useState(null);
-  const { sendRequest, status, data: postData, error } = useHttp(fetchData);
+  const [topic, setTopic] = useState(null);
+
+  const {
+    sendRequest,
+    status: postStatus,
+    data: postData,
+    error,
+  } = useHttp(fetchData);
 
   useEffect(() => {
-    if (topicId !== null) {
-      sendRequest({ path: `/posts?topic=${topicId}`, useProxy: false });
+    if (topic !== null) {
+      sendRequest({ path: `/posts?topic=${topic._id}`, useProxy: false });
     }
-  }, [topicId, sendRequest]);
+  }, [topic, sendRequest]);
 
   return (
     <main className={classes['main_page-container']}>
-      <TopicList onLoadTopic={setTopicId} />
+      <TopicList onLoadTopic={setTopic} />
       <div className={classes['main_page__content-container']}>
-        <MainHeader />
+        <MainHeader topic={topic} />
         <CreatePost />
-        {status === 'completed' ? (
-          <Posts postData={postData} />
-        ) : (
-          <LoadingSpinner />
-        )}
+        {topic ? <Posts topic={topic} /> : <LoadingSpinner />}
       </div>
       <Outlet />
     </main>

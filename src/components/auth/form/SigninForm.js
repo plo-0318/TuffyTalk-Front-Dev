@@ -1,9 +1,14 @@
 import { NavLink } from 'react-router-dom';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import { authActions } from '../../../store/auth';
 import useCheckInput from '../../../hooks/use-checkInput';
+import {
+  passwordValidateArr,
+  emailValidateArr,
+} from '../../../utils/utilValidate';
 
 import signupClasses from './SignupForm.module.css';
 import signinClasses from './SigninForm.module.css';
@@ -14,31 +19,9 @@ import { API_URL, PROXY_API_URL } from '../../../utils/config';
 
 const SigninForm = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [submitError, setSubmitError] = useState({});
-
-  // /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
-  const emailValidateArr = [
-    {
-      validate: (email) =>
-        email
-          .toLowerCase()
-          .match(
-            /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/i
-          ),
-      msg: 'Invalid email format',
-    },
-  ];
-
-  const passwordValidateArr = [
-    {
-      validate: (password) => password.trim().length >= 8,
-      msg: 'Password should contain at least 8 characters',
-    },
-    {
-      validate: (password) => password.trim().length <= 128,
-      msg: 'Password cannot exceed 128 characters',
-    },
-  ];
 
   const {
     input: emailInput,
@@ -103,6 +86,7 @@ const SigninForm = () => {
       console.log('sign in successful');
       dispatch(authActions.login());
       dispatch(authActions.setUser(data.data.user));
+      navigate('/');
     } catch (err) {
       // TODO: add modal
       console.log('something went very wrong');

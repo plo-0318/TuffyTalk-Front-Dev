@@ -1,0 +1,8 @@
+.new_passwords-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3.6rem;
+
+  margin-top: 2.4rem;
+}

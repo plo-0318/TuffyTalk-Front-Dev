@@ -5,10 +5,8 @@ import TopicItem from './TopicItem';
 import LoadingSpinner from '../../ui/loading_spinner/LoadingSpinner';
 import useHttp from '../../../hooks/use-http';
 import { fetchData } from '../../../utils/sendHttp';
-import {
-  transformTopicText,
-  transformParamTopicText,
-} from '../../../utils/util';
+import { camelToSpace, toCamel } from '../../../utils/util';
+import { RESOURCE_URL } from '../../../utils/config';
 
 import classes from './TopicList.module.css';
 import topicImg from '../../../img/placeholder/topic-placeholder.png';
@@ -25,7 +23,7 @@ const TopicList = (props) => {
   const [rendered, setRendered] = useState(false);
 
   useEffect(() => {
-    sendRequest({ path: '/topics', useProxy: false });
+    sendRequest({ path: '/topics?sort=name', useProxy: false });
   }, [sendRequest]);
 
   const { onLoadTopic } = props;
@@ -34,48 +32,84 @@ const TopicList = (props) => {
     if (status === 'completed' && !error && topics) {
       const param = location.pathname.split('/');
       const paramTopic = param[2];
-      const currentTopic = transformParamTopicText(paramTopic);
+      const currentTopic = toCamel(paramTopic, '-');
+
+      // topics.forEach((topic) => {
+      //   if (topic.name === currentTopic) {
+      //     onLoadTopic(topic._id);
+      //   }
+
+      //   if (!rendered) {
+      //     if (topic.category === 'general') {
+      //       setGeneralTopics((prevState) => [
+      //         ...prevState,
+      //         camelToSpace(topic.name),
+      //       ]);
+      //     } else if (topic.category === 'stem') {
+      //       setStemTopics((prevState) => [
+      //         ...prevState,
+      //         camelToSpace(topic.name),
+      //       ]);
+      //     } else if (topic.category === 'others') {
+      //       setOtherTopics((prevState) => [
+      //         ...prevState,
+      //         camelToSpace(topic.name),
+      //       ]);
+      //     }
+      //   }
+      // });
+
+      const general = [];
+      const stem = [];
+      const others = [];
 
       topics.forEach((topic) => {
         if (topic.name === currentTopic) {
-          onLoadTopic(topic._id);
+          onLoadTopic(topic);
         }
 
         if (!rendered) {
           if (topic.category === 'general') {
-            setGeneralTopics((prevState) => [
-              ...prevState,
-              transformTopicText(topic.name),
-            ]);
+            general.push(topic);
           } else if (topic.category === 'stem') {
-            setStemTopics((prevState) => [
-              ...prevState,
-              transformTopicText(topic.name),
-            ]);
+            stem.push(topic);
           } else if (topic.category === 'others') {
-            setOtherTopics((prevState) => [
-              ...prevState,
-              transformTopicText(topic.name),
-            ]);
+            others.push(topic);
           }
         }
       });
 
-      setRendered(true);
+      stem.sort((a, b) => a.name < b.name);
+      others.sort((a, b) => a.name < b.name);
+
+      if (!rendered) {
+        setGeneralTopics(general);
+        setStemTopics(stem);
+        setOtherTopics(others);
+        setRendered(true);
+      }
     }
   }, [topics, status, error, rendered, location, onLoadTopic]);
 
   return (
     <Fragment>
-      {status === 'pending' && <LoadingSpinner />}
+      {(status === 'pending' || error) && <LoadingSpinner />}
 
-      {status === 'completed' && (
+      {status === 'completed' && !error && (
         <nav className={`${classes['main-container']} `}>
           <div className={classes['topic-container']}>
             <ul className={classes['topic_list-container']}>
-              {generalTopics.map((topic) => (
-                <TopicItem key={topic} topicImg={topicImg} topicName={topic} />
-              ))}
+              {generalTopics.map((topic) => {
+                const topicName = camelToSpace(topic.name);
+
+                return (
+                  <TopicItem
+                    key={topicName}
+                    topicImg={`${RESOURCE_URL}/img/topics/${topic.icon}`}
+                    topicName={topicName}
+                  />
+                );
+              })}
             </ul>
             <hr />
           </div>
@@ -83,9 +117,17 @@ const TopicList = (props) => {
           <div className={classes['topic-container']}>
             <p className={classes['topic_category-text']}>STEM</p>
             <ul className={classes['topic_list-container']}>
-              {stemTopics.map((topic) => (
-                <TopicItem key={topic} topicImg={topicImg} topicName={topic} />
-              ))}
+              {stemTopics.map((topic) => {
+                const topicName = camelToSpace(topic.name);
+
+                return (
+                  <TopicItem
+                    key={topicName}
+                    topicImg={`${RESOURCE_URL}/img/topics/${topic.icon}`}
+                    topicName={topicName}
+                  />
+                );
+              })}
             </ul>
             <hr />
           </div>
@@ -93,9 +135,17 @@ const TopicList = (props) => {
           <div className={classes['topic-container']}>
             <p className={classes['topic_category-text']}>Others</p>
             <ul className={classes['topic_list-container']}>
-              {otherTopics.map((topic) => (
-                <TopicItem key={topic} topicImg={topicImg} topicName={topic} />
-              ))}
+              {otherTopics.map((topic) => {
+                const topicName = camelToSpace(topic.name);
+
+                return (
+                  <TopicItem
+                    key={topicName}
+                    topicImg={`${RESOURCE_URL}/img/topics/${topic.icon}`}
+                    topicName={topicName}
+                  />
+                );
+              })}
             </ul>
             <hr />
           </div>

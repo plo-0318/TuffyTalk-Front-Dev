@@ -100,7 +100,7 @@
   margin-top: 1.6rem;
 }
 
-.footer-container p {
+.footer-container > p {
   font-size: 1.2rem;
   color: #666;
 

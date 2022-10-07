@@ -1,9 +1,15 @@
 import { NavLink } from 'react-router-dom';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import { authActions } from '../../../store/auth';
 import useCheckInput from '../../../hooks/use-checkInput';
+import {
+  usernameValidateArr,
+  emailValidateArr,
+  passwordValidateArr,
+} from '../../../utils/utilValidate';
 
 import classes from './SignupForm.module.css';
 import commonClasses from '../../../utils/common.module.css';
@@ -13,44 +19,11 @@ import { API_URL, PROXY_API_URL } from '../../../utils/config';
 
 const SignupForm = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [confirmPassword, setConfirmPassword] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
   const [submitError, setSubmitError] = useState({});
-
-  const usernameValidateArr = [
-    {
-      validate: (username) => username.trim().length >= 3,
-      msg: 'Username should contain at least 3 characters',
-    },
-    {
-      validate: (username) => username.trim().length <= 20,
-      msg: 'Username cannot exceed 20 characters',
-    },
-  ];
-
-  // /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
-  const emailValidateArr = [
-    {
-      validate: (email) =>
-        email
-          .toLowerCase()
-          .match(
-            /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/i
-          ),
-      msg: 'Invalid email format',
-    },
-  ];
-  const passwordValidateArr = [
-    {
-      validate: (password) => password.trim().length >= 8,
-      msg: 'Password should contain at least 8 characters',
-    },
-    {
-      validate: (password) => password.trim().length <= 128,
-      msg: 'Password cannot exceed 128 characters',
-    },
-  ];
 
   const {
     input: usernameInput,
@@ -121,13 +94,16 @@ const SignupForm = () => {
       const data = await res.json();
 
       if (!data.status) {
-        throw new Error('what');
+        throw new Error('Something went wrong');
       }
 
       if (data.status !== 'success') {
-        const errMsg = data.message;
-        const field = errMsg.match(/'([^']+)'/)[1];
-        const msg = errMsg.match(/"([^']+)"/)[1];
+        if (!data.errorData) {
+          throw new Error('Something went wrong');
+        }
+
+        const field = data.errorData.field;
+        const msg = data.errorData.message;
 
         if (field === 'username') {
           setSubmitError({
@@ -169,6 +145,7 @@ const SignupForm = () => {
       console.log('sign up successful');
       dispatch(authActions.login());
       dispatch(authActions.setUser(data.data.user));
+      navigate('/');
     } catch (err) {
       // TODO: add modal
       console.log(err);

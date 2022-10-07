@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 // {validate: fn, msg: 'wrong email format'}
 
-const useCheckInput = (validateArr, submitValidate = null) => {
+const useCheckInput = (validateArr) => {
   const [input, setInput] = useState('');
   const [isTouched, setIsTouched] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);

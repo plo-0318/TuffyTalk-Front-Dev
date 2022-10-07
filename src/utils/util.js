@@ -1,5 +1,5 @@
 // computerScience -> Computer Science
-export const transformTopicText = (topic) => {
+export const camelToSpace = (topic) => {
   let transformedTopic = topic;
   let upperIndex = transformedTopic.search(/[A-Z]/);
 
@@ -23,18 +23,20 @@ export const transformTopicText = (topic) => {
   return transformedTopic;
 };
 
-//computer-science -> computerScience
-export const transformParamTopicText = (topic) => {
-  let transformedTopic = topic.split('-');
+// Computer Science -> computerScience
+export const toCamel = (word, separator) => {
+  let newWord = word.split(separator);
 
-  transformedTopic = transformedTopic
-    .map((topic, i) => {
+  newWord = newWord
+    .map((word, i) => {
       if (i > 0) {
-        return topic.charAt(0).toUpperCase() + topic.slice(1);
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      } else if (i === 0) {
+        return word.charAt(0).toLowerCase() + word.slice(1);
       }
-      return topic;
+      return word;
     })
     .join('');
 
-  return transformedTopic;
+  return newWord;
 };

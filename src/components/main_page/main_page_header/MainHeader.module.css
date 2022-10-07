@@ -27,8 +27,9 @@
 
 .topic_img-container > img {
   height: 100%;
-
   width: auto;
+
+  border-radius: 50%;
 }
 
 .header__title-container > p {

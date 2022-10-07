@@ -147,10 +147,51 @@
   background-color: #586f97;
 }
 
+.user_img-container {
+  height: 100%;
+
+  padding: 1.4rem 0;
+}
+
+.user_img-container > img {
+  height: 100%;
+  width: auto;
+
+  border-radius: 50%;
+}
+
+.user_link:link,
+.user_link:active,
+.user_link:visited {
+  color: rgb(250, 250, 250);
+  text-decoration: none;
+  font-size: 2rem;
+
+  margin-right: 1.6rem;
+}
+
+.user_link:hover {
+  color: #ddd;
+}
+
+.setting-container {
+  height: 100%;
+}
+
 .icon-container_setting {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 100%;
+  border-radius: 4px;
+}
+
+.icon-wrapper {
   background-color: #405a89;
   border-radius: 4px;
-
   padding: 0.8rem 1.2rem;
 
   cursor: pointer;
@@ -158,16 +199,16 @@
   transition: all 0.3s;
 }
 
-.icon-container_setting .icon_setting {
+.icon-wrapper .icon_setting {
   transform: rotate(0);
   transition: all 0.5s;
 }
 
-.icon-container_setting:hover .icon_setting {
+.icon-wrapper:hover .icon_setting {
   transform: rotate(-90deg);
 }
 
-.icon-container_setting:hover {
+.icon-wrapper:hover {
   background-color: #586f97;
 }
 
@@ -175,9 +216,78 @@
   color: #eee;
 }
 
-.icon_setting:hover {
-  color: #ddd;
-  background-color: #586f97;
+.popup-container {
+  position: absolute;
+  top: 100%;
+  right: -0.8rem;
+
+  min-width: 20rem;
+
+  background-color: rgb(250, 250, 250);
+  box-shadow: 0 0 5px 1.5px rgba(0, 0, 0, 0.1);
+
+  border-radius: 6px;
+
+  animation: popupOpen 0.2s ease-in-out forwards;
+
+  /* padding: 1.2rem 0; */
+}
+
+.popup-container::before {
+  content: '';
+  display: block;
+  position: absolute;
+
+  width: 2rem;
+  height: 2rem;
+  top: 0;
+  right: 10%;
+
+  transform: translateY(-50%) rotate(45deg);
+
+  background-color: inherit;
+  overflow: hidden;
+}
+
+@keyframes popupOpen {
+  from {
+    height: 0;
+  }
+
+  to {
+    height: 24rem;
+  }
+}
+
+.popup_btn-container {
+  list-style: none;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  width: 100%;
+}
+
+.popup-btn {
+  width: 100%;
+
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #555;
+
+  padding: 1.6rem 3.2rem 1.6rem 1.6rem;
+
+  font-size: 1.8rem;
+  color: #333;
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.popup-btn:hover {
+  text-decoration: underline;
+  color: #586f97;
 }
 
 .user_link-container {
