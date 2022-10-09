@@ -77,6 +77,10 @@
   background-image: linear-gradient(#f03e3e, #c92a2a);
 }
 
+.status-container__pending {
+  background-image: linear-gradient(#fcc419, #fcc419);
+}
+
 .status-icon {
   width: 3rem;
   height: 3em;

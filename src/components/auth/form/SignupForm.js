@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, Fragment, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,10 +10,12 @@ import {
   emailValidateArr,
   passwordValidateArr,
 } from '../../../utils/utilValidate';
+import useHttp from '../../../hooks/use-http';
+import { sendHttp } from '../../../utils/sendHttp';
+import Modal from '../../ui/modal/Modal';
 
 import classes from './SignupForm.module.css';
 import commonClasses from '../../../utils/common.module.css';
-import { API_URL, PROXY_API_URL } from '../../../utils/config';
 
 // {validate: fn, msg: 'wrong email format'}
 
@@ -24,6 +26,17 @@ const SignupForm = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
   const [submitError, setSubmitError] = useState({});
+
+  const { sendRequest, status, data, resetState, error } = useHttp(
+    sendHttp,
+    false
+  );
+
+  const [modalState, setModalState] = useState({
+    show: false,
+    status: 'success',
+    message: '',
+  });
 
   const {
     input: usernameInput,
@@ -60,6 +73,85 @@ const SignupForm = () => {
     setConfirmPasswordError(false);
   };
 
+  useEffect(() => {
+    if (error) {
+      setSubmitError({ show: true, status: 'fail', message: error });
+
+      return;
+    }
+
+    if (status !== 'completed') {
+      return;
+    }
+
+    if (data.status !== 'success') {
+      if (!data.errorData) {
+        setSubmitError({
+          show: true,
+          status: 'fail',
+          message: 'Semething went very wrong. Please try again later 😢',
+        });
+
+        return;
+      }
+
+      const field = data.errorData.field.toLowerCase();
+      const msg = data.errorData.message;
+
+      if (field === 'username') {
+        setSubmitError({
+          usernameError: {
+            error: true,
+            msg,
+          },
+        });
+
+        usernameSetIsSubmit(true);
+      }
+
+      if (field === 'email') {
+        setSubmitError({
+          emailError: {
+            error: true,
+            msg,
+          },
+        });
+
+        emailSetIsSubmit(true);
+      }
+
+      if (field === 'password') {
+        setSubmitError({
+          passwordError: {
+            error: true,
+            msg,
+          },
+        });
+
+        passwordSetIsSubmit(true);
+      }
+
+      resetState();
+      return;
+    }
+
+    dispatch(authActions.login());
+    dispatch(authActions.setUser(data.data.user));
+    resetState();
+    navigate('/');
+  }, [
+    status,
+    error,
+    data,
+    resetState,
+    setSubmitError,
+    emailSetIsSubmit,
+    passwordSetIsSubmit,
+    usernameSetIsSubmit,
+    dispatch,
+    navigate,
+  ]);
+
   const isValid =
     usernameIsValid &&
     emailIsValid &&
@@ -69,7 +161,7 @@ const SignupForm = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
 
-    if (!isValid) {
+    if (!isValid || status === 'pending') {
       return;
     }
 
@@ -84,169 +176,130 @@ const SignupForm = () => {
       password: passwordInput,
     });
 
-    try {
-      const res = await fetch(`${PROXY_API_URL}/users/signup`, {
+    const submitOptions = {
+      path: '/users/signup',
+      useProxy: true,
+      options: {
         method: 'POST',
         credentials: 'include',
         body: newUser,
         headers: { 'Content-Type': 'application/json' },
-      });
-      const data = await res.json();
+      },
+      forAuth: true,
+    };
 
-      if (!data.status) {
-        throw new Error('Something went wrong');
-      }
+    sendRequest(submitOptions);
+  };
 
-      if (data.status !== 'success') {
-        if (!data.errorData) {
-          throw new Error('Something went wrong');
-        }
-
-        const field = data.errorData.field;
-        const msg = data.errorData.message;
-
-        if (field === 'username') {
-          setSubmitError({
-            usernameError: {
-              error: true,
-              msg,
-            },
-          });
-
-          usernameSetIsSubmit(true);
-        }
-
-        if (field === 'email') {
-          setSubmitError({
-            emailError: {
-              error: true,
-              msg,
-            },
-          });
-
-          emailSetIsSubmit(true);
-        }
-
-        if (field === 'password') {
-          setSubmitError({
-            passwordError: {
-              error: true,
-              msg,
-            },
-          });
-
-          passwordSetIsSubmit(true);
-        }
-
-        return;
-      }
-
-      // TODO: add modal
-      console.log('sign up successful');
-      dispatch(authActions.login());
-      dispatch(authActions.setUser(data.data.user));
-      navigate('/');
-    } catch (err) {
-      // TODO: add modal
-      console.log(err);
-      console.log('something went very wrong');
-    }
+  const closeModal = () => {
+    setModalState((prevState) => {
+      return { ...prevState, show: false };
+    });
+    resetState();
   };
 
   return (
-    <form
-      className={`${commonClasses['main-container']} ${classes['form-container']}`}
-      onSubmit={submitHandler}
-    >
-      <div className={classes['title-container']}>
-        <p>Sign up</p>
-        {/* <hr /> */}
-      </div>
-      <div className={classes['inputs-container']}>
-        <div
-          id={classes['username-input']}
-          className={classes['input_item-container']}
-        >
-          <input
-            className={usernameError ? classes['input_error'] : ''}
-            type='text'
-            placeholder='Your username'
-            value={usernameInput}
-            onChange={usernameChangeHandler}
-            onBlur={usernameBlurHandler}
-          />
-          {usernameError && <p>{usernameError}</p>}
-          {submitError.usernameError && usernameIsSubmit && (
-            <p>{submitError.usernameError.msg}</p>
-          )}
+    <Fragment>
+      <Modal
+        show={modalState.show}
+        status={modalState.status}
+        message={modalState.message}
+        onConfirm={closeModal}
+      />
+      <form
+        className={`${commonClasses['main-container']} ${classes['form-container']}`}
+        onSubmit={submitHandler}
+      >
+        <div className={classes['title-container']}>
+          <p>Sign up</p>
+          {/* <hr /> */}
         </div>
+        <div className={classes['inputs-container']}>
+          <div
+            id={classes['username-input']}
+            className={classes['input_item-container']}
+          >
+            <input
+              className={usernameError ? classes['input_error'] : ''}
+              type='text'
+              placeholder='Your username'
+              value={usernameInput}
+              onChange={usernameChangeHandler}
+              onBlur={usernameBlurHandler}
+            />
+            {usernameError && <p>{usernameError}</p>}
+            {submitError.usernameError && usernameIsSubmit && (
+              <p>{submitError.usernameError.msg}</p>
+            )}
+          </div>
 
-        <div
-          id={classes['email-input']}
-          className={classes['input_item-container']}
-        >
-          <input
-            className={emailError ? classes['input_error'] : ''}
-            type='email'
-            placeholder='Your email'
-            value={emailInput}
-            onChange={emailChangeHandler}
-            onBlur={emailBlurHandler}
-          />
-          {emailError && <p>{emailError}</p>}
-          {submitError.emailError && emailIsSubmit && (
-            <p>{submitError.emailError.msg}</p>
-          )}
-        </div>
+          <div
+            id={classes['email-input']}
+            className={classes['input_item-container']}
+          >
+            <input
+              className={emailError ? classes['input_error'] : ''}
+              type='email'
+              placeholder='Your email'
+              value={emailInput}
+              onChange={emailChangeHandler}
+              onBlur={emailBlurHandler}
+            />
+            {emailError && <p>{emailError}</p>}
+            {submitError.emailError && emailIsSubmit && (
+              <p>{submitError.emailError.msg}</p>
+            )}
+          </div>
 
-        <div
-          id={classes['password-input']}
-          className={classes['input_item-container']}
-        >
-          <input
-            className={passwordError ? classes['input_error'] : ''}
-            type='password'
-            placeholder='Your password'
-            value={passwordInput}
-            onChange={passwordChangeHandler}
-            onBlur={passwordBlurHandler}
-          />{' '}
-          {passwordError && <p>{passwordError}</p>}
-          {submitError.passwordError && passwordIsSubmit && (
-            <p>{submitError.passwordError.msg}</p>
-          )}
-        </div>
+          <div
+            id={classes['password-input']}
+            className={classes['input_item-container']}
+          >
+            <input
+              className={passwordError ? classes['input_error'] : ''}
+              type='password'
+              placeholder='Your password'
+              value={passwordInput}
+              onChange={passwordChangeHandler}
+              onBlur={passwordBlurHandler}
+            />{' '}
+            {passwordError && <p>{passwordError}</p>}
+            {submitError.passwordError && passwordIsSubmit && (
+              <p>{submitError.passwordError.msg}</p>
+            )}
+          </div>
 
-        <div
-          id={classes['password_confirm-input']}
-          className={classes['input_item-container']}
-        >
-          <input
-            value={confirmPassword}
-            type='password'
-            placeholder='Confirm your password'
-            onChange={confirmPasswordChangeHandler}
-          />
-          {confirmPasswordError && <p>Passwords do not match</p>}
+          <div
+            id={classes['password_confirm-input']}
+            className={classes['input_item-container']}
+          >
+            <input
+              value={confirmPassword}
+              type='password'
+              placeholder='Confirm your password'
+              onChange={confirmPasswordChangeHandler}
+            />
+            {confirmPasswordError && <p>Passwords do not match</p>}
+          </div>
         </div>
-      </div>
-      <div className={classes['form_submit_btn-container']}>
-        <button
-          className={`${classes['form_submit-btn']} ${
-            !isValid ? classes['form_submit-btn__disable'] : ''
-          }`}
-          disabled={!isValid}
-        >
-          Sign up
-        </button>
-      </div>
-      <div className={classes['sign_in-container']}>
-        <p>Have an account ?</p>
-        <NavLink className={classes['sign_in-link']} to='/signin'>
-          Sign in
-        </NavLink>
-      </div>
-    </form>
+        <div className={classes['form_submit_btn-container']}>
+          <button
+            className={`${classes['form_submit-btn']} ${
+              !isValid ? classes['form_submit-btn__disable'] : ''
+            }`}
+            disabled={!isValid}
+          >
+            Sign up
+          </button>
+        </div>
+        <div className={classes['sign_in-container']}>
+          <p>Have an account ?</p>
+          <NavLink className={classes['sign_in-link']} to='/signin'>
+            Sign in
+          </NavLink>
+        </div>
+      </form>
+    </Fragment>
   );
 };
 

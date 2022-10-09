@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 
 import useHttp from '../../../../hooks/use-http';
-import { fetchData } from '../../../../utils/sendHttp';
+import { sendHttp } from '../../../../utils/sendHttp';
 import { RESOURCE_URL } from '../../../../utils/config';
 import { camelToSpace } from '../../../../utils/util';
 import LoadingSpinner from '../../../ui/loading_spinner/LoadingSpinner';
@@ -71,7 +71,7 @@ const UserProfilePosts = (props) => {
     status,
     data: postsData,
     error,
-  } = useHttp(fetchData);
+  } = useHttp(sendHttp);
 
   useEffect(() => {
     const path =

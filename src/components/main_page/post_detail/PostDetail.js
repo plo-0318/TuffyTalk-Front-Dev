@@ -4,25 +4,26 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { mainPageScrollActions } from '../../../store/mainPageScroll';
 
+import Modal from '../../ui/modal/Modal';
 import Comments from './comment/Comments';
 import useHttp from '../../../hooks/use-http';
-import { fetchData } from '../../../utils/sendHttp';
+import { sendHttp } from '../../../utils/sendHttp';
 import LoadingSpinner from '../../ui/loading_spinner/LoadingSpinner';
 import { authActions } from '../../../store/auth';
-
+import { currentPostActions } from '../../../store/currentPost';
+import { RESOURCE_URL } from '../../../utils/config';
 import {
   UilThumbsUp,
   UilCommentDots,
   UilBookmark,
 } from '@iconscout/react-unicons';
-import classes from './PostDetail.module.css';
 
-import userImg from '../../../img/placeholder/user-placeholder.png';
+import classes from './PostDetail.module.css';
 
 const Backdrop = (props) => {
   const dispatch = useDispatch();
 
-  const { sendRequest: toggleLikePost } = useHttp(fetchData);
+  const { sendRequest: toggleLikePost } = useHttp(sendHttp);
 
   const backdropClickHandler = () => {
     dispatch(mainPageScrollActions.setDisableScroll(false));
@@ -59,7 +60,7 @@ const PostModal = memo((props) => {
     data: postData,
     status: postStatus,
     error: postError,
-  } = useHttp(fetchData);
+  } = useHttp(sendHttp);
 
   const {
     sendRequest: toggleBookmark,
@@ -67,12 +68,17 @@ const PostModal = memo((props) => {
     status: toggleBookmarkStatus,
     error: toggleBookmarkError,
     resetState: resetToggleBookmark,
-  } = useHttp(fetchData, false);
+  } = useHttp(sendHttp, false);
 
   const [updatedPostData, setUpdatedPostData] = useState(false);
   const [userBookmark, setUserBookmark] = useState(false);
   const [userLike, setUserLike] = useState(null);
   const [postLikes, setPostLikes] = useState(0);
+  const [modalState, setModalState] = useState({
+    show: false,
+    status: 'success',
+    message: '',
+  });
 
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
@@ -119,7 +125,12 @@ const PostModal = memo((props) => {
   // Then allow render
   useEffect(() => {
     if (postStatus === 'completed' && !postError) {
-      postData.author.profilePicture = userImg;
+      const userImg =
+        postData.author.profilePicture === 'user-placeholder.png'
+          ? `${RESOURCE_URL}/img/users/user-placeholder.png`
+          : `${RESOURCE_URL}/img/users/${postData.author._id}/${postData.author.profilePicture}`;
+
+      postData.author.userImg = userImg;
       postData.createdAt = new Date(postData.createdAt).toLocaleDateString();
 
       setPostLikes(postData.likes.length);
@@ -136,15 +147,23 @@ const PostModal = memo((props) => {
   // Check if user has changed like post or not
   useEffect(() => {
     if (postStatus === 'completed' && userLike !== null) {
-      const chagned = userLike !== postData.likes.includes(user._id);
+      const changed = userLike !== postData.likes.includes(user._id);
 
-      setUserLikeChanged(chagned);
+      setUserLikeChanged(changed);
     }
   }, [postStatus, userLike, postData, user, setUserLikeChanged]);
 
-  const readyToRender = postStatus === 'completed' && updatedPostData;
-
   const bookmarkClickHandler = () => {
+    if (!user) {
+      setModalState({
+        show: true,
+        status: 'fail',
+        message: 'Please log in to bookmark a post',
+      });
+
+      return;
+    }
+
     if (toggleBookmarkStatus === 'pending') {
       return;
     }
@@ -164,74 +183,109 @@ const PostModal = memo((props) => {
   };
 
   const postLikeClickHandler = () => {
+    if (!user) {
+      setModalState({
+        show: true,
+        status: 'fail',
+        message: 'Please log in to like a post',
+      });
+
+      return;
+    }
+
+    let likes = postLikes;
+
     if (!userLike) {
       setPostLikes((prevState) => prevState + 1);
+      likes++;
     } else {
       setPostLikes((prevState) => prevState - 1);
+      likes--;
     }
+
+    dispatch(
+      currentPostActions.setPostData({ postData: { likes }, id: postData._id })
+    );
+    dispatch(currentPostActions.setShouldUpdate(true));
 
     setUserLike((prevState) => !prevState);
   };
 
+  const closeModal = () => {
+    setModalState((prevState) => {
+      return { ...prevState, show: false };
+    });
+  };
+
+  const readyToRender = postStatus === 'completed' && updatedPostData;
+
   return (
-    <div className={`${classes['post_modal-container']}`}>
-      {readyToRender ? (
-        <Fragment>
-          <div className={classes['post_detail-container']}>
-            <div className={classes['user_info-container']}>
-              <img src={postData.author.profilePicture} alt='user' />
-              <p>{postData.author.username}</p>
+    <Fragment>
+      <Modal
+        show={modalState.show}
+        status={modalState.status}
+        message={modalState.message}
+        onConfirm={closeModal}
+      />
+      <div className={`${classes['post_modal-container']}`}>
+        {readyToRender ? (
+          <Fragment>
+            <div className={classes['post_detail-container']}>
+              <div className={classes['user_info-container']}>
+                <img src={postData.author.userImg} alt='user' />
+                <p>{postData.author.username}</p>
+              </div>
+
+              <p className={classes['post_detail__title']}>{postData.title}</p>
+
+              <div className={classes['post_info-container']}>
+                <NavLink to={'/'} className={classes['topic-link']}>
+                  {postData.topic.name
+                    .split(' ')
+                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ')}
+                </NavLink>
+                <p>{postData.createdAt}</p>
+              </div>
+
+              <p className={classes['post_detail__content']}>
+                {postData.content}
+              </p>
+
+              <div className={classes['post_footer-container']}>
+                <UilThumbsUp
+                  className={
+                    userLike
+                      ? classes['post_footer__icon']
+                      : `${classes['post_footer__icon']} ${classes['post_footer__icon__inactive']}`
+                  }
+                  onClick={postLikeClickHandler}
+                />
+                <p>{postLikes}</p>
+
+                <UilCommentDots
+                  className={`${classes['post_footer__icon']} ${classes['post_footer__icon__inactive']}`}
+                />
+                <p>{postData.comments.length}</p>
+
+                <UilBookmark
+                  className={
+                    userBookmark
+                      ? classes['post_footer__icon']
+                      : `${classes['post_footer__icon']} ${classes['post_footer__icon__inactive']}`
+                  }
+                  onClick={bookmarkClickHandler}
+                />
+              </div>
             </div>
 
-            <p className={classes['post_detail__title']}>{postData.title}</p>
-
-            <div className={classes['post_info-container']}>
-              <NavLink to={'/'} className={classes['topic-link']}>
-                {postData.topic.name
-                  .split(' ')
-                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                  .join(' ')}
-              </NavLink>
-              <p>{postData.createdAt}</p>
-            </div>
-
-            <p className={classes['post_detail__content']}>
-              {postData.content}
-            </p>
-
-            <div className={classes['post_footer-container']}>
-              <UilThumbsUp
-                className={
-                  userLike
-                    ? classes['post_footer__icon']
-                    : `${classes['post_footer__icon']} ${classes['post_footer__icon__inactive']}`
-                }
-                onClick={postLikeClickHandler}
-              />
-              <p>{postLikes}</p>
-
-              <UilCommentDots
-                className={`${classes['post_footer__icon']} ${classes['post_footer__icon__inactive']}`}
-              />
-              <p>{postData.comments.length}</p>
-
-              <UilBookmark
-                className={
-                  userBookmark
-                    ? classes['post_footer__icon']
-                    : `${classes['post_footer__icon']} ${classes['post_footer__icon__inactive']}`
-                }
-                onClick={bookmarkClickHandler}
-              />
-            </div>
-          </div>
-
-          <Comments postId={postData._id} />
-        </Fragment>
-      ) : (
-        <LoadingSpinner />
-      )}
-    </div>
+            <Comments postId={postData._id} />
+          </Fragment>
+        ) : (
+          <LoadingSpinner />
+        )}
+      </div>
+    </Fragment>
   );
 });
 

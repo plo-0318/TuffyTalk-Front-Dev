@@ -7,7 +7,7 @@ import Posts from './posts/Posts';
 import TopicList from './topic_list/TopicList';
 
 import useHttp from '../../hooks/use-http';
-import { fetchData } from '../../utils/sendHttp';
+import { sendHttp } from '../../utils/sendHttp';
 import LoadingSpinner from '../ui/loading_spinner/LoadingSpinner';
 
 import classes from './MainPage.module.css';
@@ -20,7 +20,7 @@ const MainPage = (props) => {
     status: postStatus,
     data: postData,
     error,
-  } = useHttp(fetchData);
+  } = useHttp(sendHttp);
 
   useEffect(() => {
     if (topic !== null) {

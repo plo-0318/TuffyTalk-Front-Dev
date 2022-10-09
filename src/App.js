@@ -14,6 +14,7 @@ import PostDetail from './components/main_page/post_detail/PostDetail';
 import Signup from './components/auth/Signup';
 import SigninForm from './components/auth/form/SigninForm';
 import UserProfile from './components/user_profile_page/UserProfile';
+import ErrorPage from './components/error_page/ErrorPage';
 
 import classes from './App.module.css';
 import { Fragment } from 'react';
@@ -76,6 +77,7 @@ function App() {
                 element={<PostDetail onBackdropClick={() => navigate(-1)} />}
               />
             </Route>
+            <Route path='/test' element={<ErrorPage />} />
           </Routes>
         </Fragment>
       )}
@@ -85,9 +87,7 @@ function App() {
 
 export default App;
 
-//TODO: error page
-//TODO: user img
+//TODO: sort posts
 
-//TODO: likes
 //TODO: reply comment, create post (later)
 //TODO: responsive (later later)

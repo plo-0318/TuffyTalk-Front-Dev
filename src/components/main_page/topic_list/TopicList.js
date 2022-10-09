@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import TopicItem from './TopicItem';
 import LoadingSpinner from '../../ui/loading_spinner/LoadingSpinner';
 import useHttp from '../../../hooks/use-http';
-import { fetchData } from '../../../utils/sendHttp';
+import { sendHttp } from '../../../utils/sendHttp';
 import { camelToSpace, toCamel } from '../../../utils/util';
 import { RESOURCE_URL } from '../../../utils/config';
 
@@ -16,7 +16,7 @@ import topicImg from '../../../img/placeholder/topic-placeholder.png';
 const TopicList = (props) => {
   const location = useLocation();
 
-  const { sendRequest, status, data: topics, error } = useHttp(fetchData);
+  const { sendRequest, status, data: topics, error } = useHttp(sendHttp);
   const [generalTopics, setGeneralTopics] = useState([]);
   const [stemTopics, setStemTopics] = useState([]);
   const [otherTopics, setOtherTopics] = useState([]);

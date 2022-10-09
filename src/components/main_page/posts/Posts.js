@@ -4,7 +4,7 @@ import LoadingSpinner from '../../ui/loading_spinner/LoadingSpinner';
 
 import PostItem from './PostItem';
 import useHttp from '../../../hooks/use-http';
-import { fetchData } from '../../../utils/sendHttp';
+import { sendHttp } from '../../../utils/sendHttp';
 import { POST_LIMIT } from '../../../utils/config';
 
 import commonClasses from '../../../utils/common.module.css';
@@ -108,7 +108,7 @@ const PageButtons = (props) => {
   return <div className={classes['page_btns-container']}>{jsx}</div>;
 };
 
-const PostsContent = (props) => {
+const PostsContent = memo((props) => {
   const user = useSelector((state) => state.auth.user);
   const { postData } = props;
 
@@ -130,7 +130,7 @@ const PostsContent = (props) => {
   });
 
   return postData.length > 0 ? contentHavePosts : contentNoPosts;
-};
+});
 
 const Posts = (props) => {
   const { topic } = props;
@@ -151,7 +151,7 @@ const Posts = (props) => {
     status: postStatus,
     data: postData,
     error: postError,
-  } = useHttp(fetchData);
+  } = useHttp(sendHttp);
 
   useEffect(() => {
     fetchPosts({

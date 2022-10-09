@@ -4,13 +4,12 @@ import { Fragment, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { authActions } from '../../store/auth';
 
+import { RESOURCE_URL } from '../../utils/config';
 import useHttp from '../../hooks/use-http';
 import { logout } from '../../utils/sendHttp';
 
 import classes from './NavBar.module.css';
 import logo from '../../img/logos/twitter_header_photo_1.png';
-
-import userImg from '../../img/placeholder/user-placeholder.png';
 
 const SettingIcon = (props) => {
   const [settingOpen, setSettingOpen] = useState(false);
@@ -121,6 +120,11 @@ const AuthLinks = (props) => (
 );
 
 const UserLinks = (props) => {
+  const userImg =
+    props.user.profilePicture === 'user-placeholder.png'
+      ? `${RESOURCE_URL}/img/users/user-placeholder.png`
+      : `${RESOURCE_URL}/img/users/${props.user._id}/${props.user.profilePicture}`;
+
   return (
     <ul className={classes['nav_links-container']}>
       <li className={classes['user_img-container']}>

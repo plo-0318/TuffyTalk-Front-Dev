@@ -1,8 +1,10 @@
+import { useEffect, memo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { RESOURCE_URL } from '../../../utils/config';
+import { currentPostActions } from '../../../store/currentPost';
 import { mainPageScrollActions } from '../../../store/mainPageScroll';
-
 import {
   UilThumbsUp,
   UilCommentDots,
@@ -10,71 +12,77 @@ import {
 } from '@iconscout/react-unicons';
 
 import classes from './PostItem.module.css';
-import userImg from '../../../img/placeholder/user-placeholder.png';
 import postImg from '../../../img/placeholder/topic-placeholder.png';
-
-//     username: 'cece',
-//     profilePic: userImg,
-//     title: 'This is a post title',
-//     content: '',
-//     createdAt: '2022-9-20',
-//     likes: 78,
-//     comments: ['123', '456', '789'],
-//     img: null,
 
 const PostItem = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [postData, setPostData] = useState({
+    ...props.post,
+    likes: props.post.likes.length,
+    createdAt: new Date(props.post.createdAt).toLocaleDateString(),
+  });
+
+  const {
+    postData: postStateData,
+    id: postStateId,
+    shouldUpdate,
+  } = useSelector((state) => state.currentPost);
+
   const dispatch = useDispatch();
 
-  const post = {
-    username: props.post.author.username,
-    profilePic: userImg,
-    title: props.post.title,
-    content: props.post.content,
-    createdAt: new Date(props.post.createdAt).toLocaleDateString(),
-    likes: props.post.likes,
-    comments: props.post.comments.length,
-    postImg,
-    id: props.post._id,
-  };
+  useEffect(() => {
+    if (postStateId === postData._id && shouldUpdate) {
+      setPostData((prevState) => {
+        return { ...prevState, ...postStateData };
+      });
+      dispatch(currentPostActions.resetState());
+    }
+  }, [postStateData, postStateId, shouldUpdate, postData, dispatch]);
 
+  const hasImage = postData.images.length > 0;
   const titleContentClasses = `${classes['title_content-container']} ${
-    props.postImg ? '' : classes['title_content-container__no_img']
+    hasImage ? '' : classes['title_content-container__no_img']
   }`;
 
   const postClickHandler = () => {
     dispatch(mainPageScrollActions.setDisableScroll(true));
-    navigate(`${location.pathname}/post/${post.id}`);
+    navigate(`${location.pathname}/post/${postData._id}`);
   };
+
+  const userImg =
+    postData.author.profilePicture === 'user-placeholder.png'
+      ? `${RESOURCE_URL}/img/users/user-placeholder.png`
+      : `${RESOURCE_URL}/img/users/${postData.author._id}/${postData.author.profilePicture}`;
 
   return (
     <div className={classes['post-container']} onClick={postClickHandler}>
       <div className={classes['header-container']}>
         <div className={classes['header__picture_name-container']}>
-          <img src={post.profilePic} alt='user' />
-          <p className={classes['username']}>{post.username}</p>
+          <img src={userImg} alt='user' />
+          <p className={classes['username']}>{postData.author.username}</p>
         </div>
-        <p>{post.createdAt}</p>
+        <p>{postData.createdAt}</p>
       </div>
 
       <div className={classes['main_content-container']}>
         <div className={titleContentClasses}>
-          <p className={classes['title-text']}>{post.title}</p>
-          <p className={classes['content-text']}>{post.content}</p>
+          <p className={classes['title-text']}>{postData.title}</p>
+          <p className={classes['content-text']}>{postData.content}</p>
           <div className={classes['footer-container']}>
             <UilThumbsUp className={classes['footer-icon']} />
-            <p>{post.likes.length}</p>
+            <p>{postData.likes}</p>
             <UilCommentDots className={classes['footer-icon']} />
-            <p>{post.comments}</p>
+            <p>{postData.comments.length}</p>
             {props.bookmark && (
               <UilBookmark className={classes['footer-icon']} />
             )}
           </div>
         </div>
-        {post.postImg && (
+        {hasImage && (
           <div className={classes['post_img-container']}>
-            <img src={post.postImg} alt='post' />
+            <img src={postImg} alt='post' />
           </div>
         )}
       </div>
@@ -84,4 +92,4 @@ const PostItem = (props) => {
   );
 };
 
-export default PostItem;
+export default memo(PostItem);

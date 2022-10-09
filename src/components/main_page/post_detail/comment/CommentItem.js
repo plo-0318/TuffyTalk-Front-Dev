@@ -1,30 +1,103 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 
+import Modal from '../../../ui/modal/Modal';
 import useHttp from '../../../../hooks/use-http';
-import { fetchData } from '../../../../utils/sendHttp';
+import { sendHttp } from '../../../../utils/sendHttp';
 import { UilThumbsUp } from '@iconscout/react-unicons';
+import { RESOURCE_URL } from '../../../../utils/config';
 
 import classes from './CommentItem.module.css';
-import userImg from '../../../../img/placeholder/user-placeholder.png';
 
 const CommentContent = (props) => {
   props.comment.createdAt = new Date(
     props.comment.createdAt
   ).toLocaleDateString();
 
-  // Temporary
-  props.comment.author.profilePicture = userImg;
+  const user = useSelector((state) => state.auth.user);
+
+  const [userLike, setUserLike] = useState(
+    user ? props.comment.likes.includes(user._id) : 0
+  );
+  const [commentLikes, setCommentLikes] = useState(
+    props.comment.likes.length,
+    null
+  );
+  const [modalState, setModalState] = useState({
+    show: false,
+    status: 'success',
+    message: '',
+  });
+
+  const {
+    sendRequest: toggleLikeComment,
+    status,
+    error,
+  } = useHttp(sendHttp, false);
+
+  const userImg =
+    props.comment.author.profilePicture === 'user-placeholder.png'
+      ? `${RESOURCE_URL}/img/users/user-placeholder.png`
+      : `${RESOURCE_URL}/img/users/${props.comment.author._id}/${props.comment.author.profilePicture}`;
+
+  const likeClickHandler = () => {
+    if (!user) {
+      setModalState({
+        show: true,
+        status: 'fail',
+        message: 'Please log in to like a comment',
+      });
+
+      return;
+    }
+
+    if (status === 'pending' && !error) {
+      return;
+    }
+
+    const submitOptions = {
+      path: `/user-actions/toggle-like-comment/${props.comment._id}`,
+      useProxy: true,
+      options: {
+        method: 'PATCH',
+        credentials: 'include',
+      },
+    };
+
+    toggleLikeComment(submitOptions);
+
+    if (!userLike) {
+      setCommentLikes((prevState) => prevState + 1);
+    } else {
+      setCommentLikes((prevState) => prevState - 1);
+    }
+  };
+
+  const closeModal = () => {
+    setModalState((prevState) => {
+      return { ...prevState, show: false };
+    });
+  };
 
   return (
     <React.Fragment>
+      <Modal
+        show={modalState.show}
+        status={modalState.status}
+        message={modalState.message}
+        onConfirm={closeModal}
+      />
       <div className={classes['comment_header-container']}>
         <div className={classes['left']}>
-          <img src={props.comment.author.profilePicture} alt='user' />
+          <img src={userImg} alt='user' />
           <p>{props.comment.author.username}</p>
         </div>
         <div className={classes['right']}>
-          <UilThumbsUp className={classes['comment_icon']} />
-          <p>{props.comment.likes.length}</p>
+          <UilThumbsUp
+            className={classes['comment_icon']}
+            onClick={likeClickHandler}
+          />
+          <p>{commentLikes}</p>
         </div>
       </div>
 
@@ -47,7 +120,7 @@ const CommentItem = (props) => {
     data: childCommentData,
     status,
     error,
-  } = useHttp(fetchData);
+  } = useHttp(sendHttp);
 
   const { comment } = props;
 

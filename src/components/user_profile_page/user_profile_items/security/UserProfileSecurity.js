@@ -6,7 +6,7 @@ import InputField from '../form_ui/InputField';
 import Modal from '../../../ui/modal/Modal';
 
 import useHttp from '../../../../hooks/use-http';
-import { fetchData } from '../../../../utils/sendHttp';
+import { sendHttp } from '../../../../utils/sendHttp';
 import { passwordValidateArr } from '../../../../utils/utilValidate';
 
 import profileClasses from '../ProfileItemCommon.module.css';
@@ -26,7 +26,7 @@ const UserProfileSecurity = () => {
     data: userData,
     status: userDataStatus,
     error: userDataError,
-  } = useHttp(fetchData, false);
+  } = useHttp(sendHttp, false);
 
   const passwordRef = useRef();
   const newPasswordRef = useRef();

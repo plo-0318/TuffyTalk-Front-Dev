@@ -1,6 +1,11 @@
 import { API_URL, PROXY_API_URL } from './config';
 
-export const fetchData = async ({ path, useProxy, options = null }) => {
+export const sendHttp = async ({
+  path,
+  useProxy,
+  options = null,
+  forAuth = false,
+}) => {
   const url = useProxy ? PROXY_API_URL : API_URL;
 
   if (!path) {
@@ -11,14 +16,20 @@ export const fetchData = async ({ path, useProxy, options = null }) => {
   const data = await res.json();
 
   if (!data || !data.status) {
-    throw new Error('Something went very wrong');
+    throw new Error('Something went wrong. Please try again later 😢');
   }
 
-  if (data.status !== 'success') {
-    throw new Error(data.message);
+  if (!forAuth) {
+    if (data.status !== 'success') {
+      throw new Error(data.message);
+    }
+
+    return data.data.data;
   }
 
-  return data.data.data;
+  // For /users/login and /users/singup routes
+  // Want to have access to the error messages
+  return data;
 };
 
 export const loginWithJWT = async (useProxy) => {
@@ -32,7 +43,7 @@ export const loginWithJWT = async (useProxy) => {
   const data = await res.json();
 
   if (!data || !data.status) {
-    throw new Error('Something went very wrong');
+    throw new Error('Something went wrong. Please try again later 😢');
   }
 
   return data.user;

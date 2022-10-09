@@ -1,9 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { CSSTransition } from 'react-transition-group';
-import { UilCheckCircle } from '@iconscout/react-unicons';
-import { UilTimesCircle } from '@iconscout/react-unicons';
-import { UilTimes } from '@iconscout/react-unicons';
+
+import LoadingSpinner from '../loading_spinner/LoadingSpinner';
+import {
+  UilCheckCircle,
+  UilTimesCircle,
+  UilTimes,
+  UilHourglass,
+} from '@iconscout/react-unicons';
 
 import classes from './Modal.module.css';
 import commonClasses from '../../../utils/common.module.css';
@@ -33,18 +38,26 @@ const Backdrop = (props) => {
 };
 
 const ModalOverlay = (props) => {
-  const statusClasses = `${classes['status-container']} ${
-    props.status === 'success' ? '' : classes['status-container__fail']
-  }`;
-  const buttonClasses = `${classes['button-container']} ${
+  let statusClasses;
+  let buttonClasses = `${classes['button-container']} ${
     props.status === 'success' ? '' : classes['button-container__fail']
   }`;
-  const statusIcon =
-    props.status === 'success' ? (
-      <UilCheckCircle className={classes['status-icon']} />
-    ) : (
-      <UilTimesCircle className={classes['status-icon']} />
-    );
+
+  //.status-container__pending
+
+  let statusIcon;
+  if (props.status === 'success') {
+    statusIcon = <UilCheckCircle className={classes['status-icon']} />;
+    statusClasses = `${classes['status-container']}`;
+  }
+  if (props.status === 'fail') {
+    statusIcon = <UilTimesCircle className={classes['status-icon']} />;
+    statusClasses = `${classes['status-container']} ${classes['status-container__fail']}`;
+  }
+  if (props.status === 'pending') {
+    statusIcon = <UilHourglass className={classes['status-icon']} />;
+    statusClasses = `${classes['status-container']} ${classes['status-container__pending']}`;
+  }
 
   return (
     <CSSTransition
@@ -63,28 +76,36 @@ const ModalOverlay = (props) => {
     >
       <div className={classes['modal-container']}>
         <div className={statusClasses}>{statusIcon}</div>
-        <p className={commonClasses['disable_select']}>{props.message}</p>
-        <div className={buttonClasses} onClick={props.onConfirm}>
-          <UilTimes className={classes['button-icon']} />
-          <p>Close</p>
-        </div>
+        {props.status === 'pending' ? (
+          <LoadingSpinner />
+        ) : (
+          <React.Fragment>
+            <p className={commonClasses['disable_select']}>{props.message}</p>
+            <div className={buttonClasses} onClick={props.onConfirm}>
+              <UilTimes className={classes['button-icon']} />
+              <p>Close</p>
+            </div>
+          </React.Fragment>
+        )}
       </div>
     </CSSTransition>
   );
 };
 
 const Modal = (props) => {
+  const confirmHandler = props.status === 'pending' ? null : props.onConfirm;
+
   return (
     <React.Fragment>
       {ReactDOM.createPortal(
-        <Backdrop show={props.show} onConfirm={props.onConfirm} />,
+        <Backdrop show={props.show} onConfirm={confirmHandler} />,
         document.getElementById('backdrop-root')
       )}
       {ReactDOM.createPortal(
         <ModalOverlay
           status={props.status}
           message={props.message}
-          onConfirm={props.onConfirm}
+          onConfirm={confirmHandler}
           show={props.show}
         />,
         document.getElementById('overlay-root')

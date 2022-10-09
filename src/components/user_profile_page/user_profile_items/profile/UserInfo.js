@@ -9,7 +9,7 @@ import Modal from '../../../ui/modal/Modal';
 
 import { toCamel } from '../../../../utils/util';
 import useHttp from '../../../../hooks/use-http';
-import { fetchData } from '../../../../utils/sendHttp';
+import { sendHttp } from '../../../../utils/sendHttp';
 import { usernameValidateArr } from '../../../../utils/utilValidate';
 
 import profileClasses from '../ProfileItemCommon.module.css';
@@ -30,14 +30,14 @@ const UserInfo = () => {
     data: majorData,
     status: majorStatus,
     error: majorError,
-  } = useHttp(fetchData);
+  } = useHttp(sendHttp);
 
   const {
     sendRequest: submitUserData,
     data: userData,
     status: userDataStatus,
     error: userDataError,
-  } = useHttp(fetchData, false);
+  } = useHttp(sendHttp, false);
 
   const usernameRef = useRef();
 

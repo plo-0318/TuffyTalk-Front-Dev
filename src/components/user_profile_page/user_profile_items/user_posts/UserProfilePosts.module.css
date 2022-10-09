@@ -23,6 +23,25 @@
   overflow-y: auto;
 }
 
+.bookmarks_background-container::-webkit-scrollbar {
+  width: 1rem;
+}
+
+.bookmarks_background-container::-webkit-scrollbar-track {
+  border-radius: 100vh;
+  margin-block: 0.5rem;
+}
+
+.bookmarks_background-container::-webkit-scrollbar-thumb {
+  /* background: #10316b; */
+  background: linear-gradient(45deg, #28467a, #10316b);
+  border-radius: 100vh;
+}
+
+.bookmarks_background-container::-webkit-scrollbar-thumb:hover {
+  background: #586f97;
+}
+
 .bookmark_item-container {
   height: 10rem;
   width: 100%;

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import useHttp from '../../../../hooks/use-http';
-import { fetchData } from '../../../../utils/sendHttp';
+import { sendHttp } from '../../../../utils/sendHttp';
 import CommentItem from './CommentItem';
 import LoadingSpinner from '../../../ui/loading_spinner/LoadingSpinner';
 
@@ -10,7 +10,7 @@ import classes from './Comments.module.css';
 const Comments = (props) => {
   const { postId } = props;
 
-  const { sendRequest, data: commentData, status, error } = useHttp(fetchData);
+  const { sendRequest, data: commentData, status, error } = useHttp(sendHttp);
 
   useEffect(() => {
     sendRequest({
