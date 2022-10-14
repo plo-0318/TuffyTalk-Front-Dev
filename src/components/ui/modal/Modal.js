@@ -98,7 +98,11 @@ const Modal = (props) => {
   return (
     <React.Fragment>
       {ReactDOM.createPortal(
-        <Backdrop show={props.show} onConfirm={confirmHandler} />,
+        <Backdrop
+          show={props.show}
+          onConfirm={confirmHandler}
+          status={props.status}
+        />,
         document.getElementById('backdrop-root')
       )}
       {ReactDOM.createPortal(

@@ -1,0 +1,56 @@
+.editor-container {
+  position: relative;
+
+  width: 100%;
+  height: var(--container-height);
+
+  box-shadow: 0 0 5px 1.5px rgba(0, 0, 0, 0.1);
+}
+
+.editor_submit-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+
+  transform: translateY(115%);
+
+  cursor: pointer;
+  background-color: #10316b;
+  padding: 0.8rem 2.4rem;
+  border-radius: 6px;
+
+  font-size: 1.6rem;
+  color: rgb(250, 250, 250);
+
+  transition: all 0.3s;
+}
+
+.editor_submit-btn:hover {
+  background-color: #28467a;
+}
+
+.editor-container .ck-editor__editable {
+  height: calc(var(--container-height) - 4rem);
+
+  font-size: 1.4rem;
+  line-height: 3.2rem;
+}
+
+.ck.ck-content ul,
+.ck.ck-content ul li {
+  list-style-type: inherit;
+}
+
+.ck.ck-content ul {
+  /* Default user agent stylesheet, you can change it to your needs. */
+  padding-left: 40px;
+}
+
+.ck.ck-content ol,
+.ck.ck-content ol li {
+  list-style-type: decimal;
+}
+.ck.ck-content ol {
+  /* Default user agent stylesheet, you can change it to your needs. */
+  padding-left: 40px;
+}

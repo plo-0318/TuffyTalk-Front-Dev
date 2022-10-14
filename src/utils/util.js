@@ -40,3 +40,8 @@ export const toCamel = (word, separator) => {
 
   return newWord;
 };
+
+// computerScience -> computer-science
+export const camelToDash = (word) => {
+  return camelToSpace(word).toLowerCase().split(' ').join('-');
+};

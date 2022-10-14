@@ -6,7 +6,7 @@
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.7);
 
-  z-index: 6;
+  z-index: 9;
 }
 
 .backdrop-open {
@@ -48,7 +48,7 @@
   position: fixed;
   top: 2.4rem;
   left: 50%;
-  z-index: 7;
+  z-index: 10;
   padding-bottom: 1.2rem;
 
   transform: translateX(-50%);

@@ -9,7 +9,6 @@ import { camelToSpace, toCamel } from '../../../utils/util';
 import { RESOURCE_URL } from '../../../utils/config';
 
 import classes from './TopicList.module.css';
-import topicImg from '../../../img/placeholder/topic-placeholder.png';
 
 // status: pending, completed
 
@@ -30,34 +29,15 @@ const TopicList = (props) => {
 
   useEffect(() => {
     if (status === 'completed' && !error && topics) {
-      const param = location.pathname.split('/');
-      const paramTopic = param[2];
-      const currentTopic = toCamel(paramTopic, '-');
+      let param;
+      let paramTopic;
+      let currentTopic;
 
-      // topics.forEach((topic) => {
-      //   if (topic.name === currentTopic) {
-      //     onLoadTopic(topic._id);
-      //   }
-
-      //   if (!rendered) {
-      //     if (topic.category === 'general') {
-      //       setGeneralTopics((prevState) => [
-      //         ...prevState,
-      //         camelToSpace(topic.name),
-      //       ]);
-      //     } else if (topic.category === 'stem') {
-      //       setStemTopics((prevState) => [
-      //         ...prevState,
-      //         camelToSpace(topic.name),
-      //       ]);
-      //     } else if (topic.category === 'others') {
-      //       setOtherTopics((prevState) => [
-      //         ...prevState,
-      //         camelToSpace(topic.name),
-      //       ]);
-      //     }
-      //   }
-      // });
+      if (location.pathname.startsWith('/topic')) {
+        param = location.pathname.split('/');
+        paramTopic = param[2];
+        currentTopic = toCamel(paramTopic, '-');
+      }
 
       const general = [];
       const stem = [];

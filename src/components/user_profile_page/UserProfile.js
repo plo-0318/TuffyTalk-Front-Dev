@@ -40,6 +40,16 @@ const UserProfile = () => {
   } = useHttp(sendHttp, false);
 
   useEffect(() => {
+    if (uploadPictureStatus === 'completed' && uploadPictureError) {
+      resetUploadPicture();
+      setModalState({
+        show: true,
+        status: 'fail',
+        message: uploadPictureError,
+      });
+      return;
+    }
+
     if (uploadPictureStatus === 'completed' && !uploadPictureError) {
       dispatch(authActions.setUser(updatedUserData));
       resetUploadPicture();
@@ -78,7 +88,7 @@ const UserProfile = () => {
 
     const form = new FormData();
 
-    form.append('photo', e.target.files[0]);
+    form.append('image', e.target.files[0]);
 
     const submitOptions = {
       path: '/user-actions/update-me',
@@ -103,7 +113,10 @@ const UserProfile = () => {
     setModalState((prevState) => {
       return { ...prevState, show: false };
     });
-    navigate(0);
+
+    if (!uploadPictureError) {
+      navigate(0);
+    }
   };
 
   return (

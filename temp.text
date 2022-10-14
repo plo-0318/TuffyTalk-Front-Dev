@@ -6,3 +6,8 @@ font (px)
 
 spacing (px)
 2 / 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 80 / 96 / 128
+
+z-index
+modal: 9-10
+createPost: 6-7
+postDetail: 4-5

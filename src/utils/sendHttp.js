@@ -13,6 +13,11 @@ export const sendHttp = async ({
   }
 
   const res = await fetch(`${url}${path}`, options);
+
+  if (res.status === 204) {
+    return null;
+  }
+
   const data = await res.json();
 
   if (!data || !data.status) {

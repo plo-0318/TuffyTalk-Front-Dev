@@ -1,8 +1,10 @@
 import { useState, memo } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 import { camelToSpace, toCamel } from '../../../utils/util';
 import { RESOURCE_URL } from '../../../utils/config';
+import { postListActions } from '../../../store/postList';
 
 import classes from './MainHeader.module.css';
 import commonClasses from '../../../utils/common.module.css';
@@ -13,18 +15,26 @@ const MainHeader = (props) => {
   const paramTopic = location.pathname.split('/')[2];
   const topic = camelToSpace(toCamel(paramTopic, '-'));
 
-  const [selectedTab, setSelectedTab] = useState('hot');
+  const dispatch = useDispatch();
+
+  const [selectedTab, setSelectedTab] = useState('new');
 
   const hotBtnHandler = (e) => {
     if (selectedTab !== 'hot') {
       setSelectedTab('hot');
+      dispatch(postListActions.setSortHot());
     }
+
+    dispatch(postListActions.setCurrentPage(1));
   };
 
   const newBtnHandler = (e) => {
     if (selectedTab !== 'new') {
       setSelectedTab('new');
+      dispatch(postListActions.setSortNew());
     }
+
+    dispatch(postListActions.setCurrentPage(1));
   };
 
   return (

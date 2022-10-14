@@ -1,6 +1,7 @@
 import { useState, useEffect, memo, Fragment } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import LoadingSpinner from '../../ui/loading_spinner/LoadingSpinner';
+import { useSearchParams } from 'react-router-dom';
 
 import PostItem from './PostItem';
 import useHttp from '../../../hooks/use-http';
@@ -9,12 +10,13 @@ import { POST_LIMIT } from '../../../utils/config';
 
 import commonClasses from '../../../utils/common.module.css';
 import classes from './Posts.module.css';
+import { postListActions } from '../../../store/postList';
 
 const PageButtons = (props) => {
   const { numPages, currentPage, onPageChange } = props;
 
   const insertButton = (count, currentIndex, direction) => {
-    let index = currentIndex;
+    let index = Number.parseInt(currentIndex);
     const jsx = [];
 
     for (let i = 0; i < count; i++) {
@@ -135,14 +137,28 @@ const PostsContent = memo((props) => {
 const Posts = (props) => {
   const { topic } = props;
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const dispatch = useDispatch();
+
+  const counter = useSelector((state) => state.postList.counter);
+  const sort = useSelector((state) => state.postList.sort);
+  const currentPage = useSelector((state) => state.postList.currentPage);
+
+  const [searchParams] = useSearchParams();
+
+  if (searchParams.get('page')) {
+    dispatch(postListActions.setCurrentPage(searchParams.get('page')));
+  }
+
+  const [, setCounter] = useState(counter);
   const [currentTopic, setCurrentTopic] = useState(topic._id);
 
-  let numPages = Math.trunc(topic.posts.length / POST_LIMIT);
-  if (topic.posts.length % POST_LIMIT !== 0) {
+  const postLimit = searchParams.get('limit') || POST_LIMIT;
+
+  let numPages = Math.trunc(topic.posts.length / postLimit);
+  if (topic.posts.length % postLimit !== 0) {
     numPages++;
   }
-  if (POST_LIMIT === 1) {
+  if (postLimit === 1) {
     numPages = topic.posts.length;
   }
 
@@ -154,19 +170,33 @@ const Posts = (props) => {
   } = useHttp(sendHttp);
 
   useEffect(() => {
+    const sortBy = sort === 'new' ? 'sort=-createdAt,_id' : 'sort=numLikes,_id';
+
     fetchPosts({
-      path: `/posts?topic=${topic._id}&page=${currentPage}&limit=${POST_LIMIT}`,
+      path: `/posts?topic=${topic._id}&page=${currentPage}&limit=${postLimit}&${sortBy}`,
       useProxy: false,
     });
 
+    // Resetting the page number when user switch topic
     if (currentTopic !== topic._id) {
       setCurrentTopic(topic._id);
-      setCurrentPage(1);
+      dispatch(postListActions.setCurrentPage(1));
     }
-  }, [fetchPosts, topic, currentPage, currentTopic, setCurrentTopic]);
+
+    setCounter(counter);
+  }, [
+    fetchPosts,
+    topic,
+    currentPage,
+    currentTopic,
+    counter,
+    postLimit,
+    sort,
+    dispatch,
+  ]);
 
   const changePageHandler = (page) => {
-    setCurrentPage(page);
+    dispatch(postListActions.setCurrentPage(page));
   };
 
   return (

@@ -1,5 +1,5 @@
-import { Fragment, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { Fragment, useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 
 import useHttp from '../../../../hooks/use-http';
@@ -7,6 +7,7 @@ import { sendHttp } from '../../../../utils/sendHttp';
 import { RESOURCE_URL } from '../../../../utils/config';
 import { camelToSpace } from '../../../../utils/util';
 import LoadingSpinner from '../../../ui/loading_spinner/LoadingSpinner';
+import { userProfileDataActions } from '../../../../store/userProfileData';
 
 import classes from './UserProfilePosts.module.css';
 import profileClasses from '../ProfileItemCommon.module.css';
@@ -63,6 +64,11 @@ const ProfilePostContent = (props) => {
 
 const UserProfilePosts = (props) => {
   const user = useSelector((state) => state.auth.user);
+  const postDataState = useSelector((state) => state.userProfileData.posts);
+
+  const [readyToRender, setReadyToRender] = useState(false);
+
+  const dispatch = useDispatch();
 
   const { type } = props;
 
@@ -83,7 +89,19 @@ const UserProfilePosts = (props) => {
       path,
       useProxy: true,
     });
-  }, [fetchPosts, user, type]);
+  }, [fetchPosts, type, user]);
+
+  useEffect(() => {
+    if (readyToRender) {
+      return;
+    }
+
+    if (status === 'completed' && !error && postsData) {
+      dispatch(userProfileDataActions.setPosts(postsData));
+
+      setReadyToRender(true);
+    }
+  }, [status, postsData, error, dispatch, readyToRender]);
 
   const titleText = type === 'bookmark' ? 'Bookmarks' : 'Posts';
 
@@ -95,9 +113,9 @@ const UserProfilePosts = (props) => {
         </div>
       </div>
       <div className={classes['bookmarks-container']}>
-        {status === 'completed' ? (
+        {status === 'completed' && readyToRender ? (
           <ul className={classes['bookmarks_background-container']}>
-            <ProfilePostContent postData={postsData} />
+            <ProfilePostContent postData={postDataState} />
           </ul>
         ) : (
           <LoadingSpinner />

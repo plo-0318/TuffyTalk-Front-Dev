@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialScrollState = { disableScroll: false };
+const initialScrollState = { disableScroll: false, scrollPosition: 0 };
 
 const mainPageScrollSlice = createSlice({
   name: 'mainPageScroll',
@@ -8,6 +8,14 @@ const mainPageScrollSlice = createSlice({
   reducers: {
     setDisableScroll(state, action) {
       state.disableScroll = action.payload;
+    },
+
+    saveScrollPosition(state) {
+      state.scrollPosition = window.scrollY;
+    },
+
+    resetScrollPosition(state) {
+      state.scrollPosition = 0;
     },
   },
 });

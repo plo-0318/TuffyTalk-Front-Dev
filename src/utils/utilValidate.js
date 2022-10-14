@@ -40,3 +40,14 @@ export const passwordValidateArr = [
     msg: 'Password needs to contain at least 1 character and at least 1 number',
   },
 ];
+
+export const postTitleValidateArr = [
+  {
+    validate: (title) => title.trim().length >= 3,
+    msg: 'Title should contain at least 3 characters',
+  },
+  {
+    validate: (title) => title.trim().length <= 20,
+    msg: 'Title cannot exceed 50 characters',
+  },
+];

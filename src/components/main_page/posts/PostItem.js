@@ -12,7 +12,6 @@ import {
 } from '@iconscout/react-unicons';
 
 import classes from './PostItem.module.css';
-import postImg from '../../../img/placeholder/topic-placeholder.png';
 
 const PostItem = (props) => {
   const navigate = useNavigate();
@@ -46,8 +45,13 @@ const PostItem = (props) => {
     hasImage ? '' : classes['title_content-container__no_img']
   }`;
 
+  const postImg = hasImage
+    ? `${RESOURCE_URL}/img/users/${postData.author._id}/posts/${postData._id}/${postData.images[0]}`
+    : null;
+
   const postClickHandler = () => {
     dispatch(mainPageScrollActions.setDisableScroll(true));
+    dispatch(mainPageScrollActions.saveScrollPosition());
     navigate(`${location.pathname}/post/${postData._id}`);
   };
 
@@ -55,6 +59,14 @@ const PostItem = (props) => {
     postData.author.profilePicture === 'user-placeholder.png'
       ? `${RESOURCE_URL}/img/users/user-placeholder.png`
       : `${RESOURCE_URL}/img/users/${postData.author._id}/${postData.author.profilePicture}`;
+
+  const pRegex = /(?<=(<p>)\s*).*?(?=\s*<)/s;
+  const liRegex = /(?<=(<li>)\s*).*?(?=\s*<)/s;
+
+  const p = postData.content.match(pRegex);
+  const li = postData.content.match(liRegex);
+
+  let content = p ? p[0] : li ? li[0] : '';
 
   return (
     <div className={classes['post-container']} onClick={postClickHandler}>
@@ -69,7 +81,7 @@ const PostItem = (props) => {
       <div className={classes['main_content-container']}>
         <div className={titleContentClasses}>
           <p className={classes['title-text']}>{postData.title}</p>
-          <p className={classes['content-text']}>{postData.content}</p>
+          <p className={classes['content-text']}>{content}</p>
           <div className={classes['footer-container']}>
             <UilThumbsUp className={classes['footer-icon']} />
             <p>{postData.likes}</p>

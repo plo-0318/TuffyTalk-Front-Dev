@@ -1,0 +1,13 @@
+.search_result_page-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2.4rem;
+
+  margin-top: 2.4rem;
+}
+
+.search_result-container {
+  height: 50rem;
+  width: 80rem;
+}
