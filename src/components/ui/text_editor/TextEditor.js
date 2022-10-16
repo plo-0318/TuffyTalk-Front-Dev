@@ -71,13 +71,8 @@ const TextEditor = (props) => {
     props.onChange(editor.getData());
   };
 
-  const containerHeight = props.containerHeight || '50rem';
-
   return (
-    <div
-      className={'editor-container'}
-      style={{ '--container-height': containerHeight }}
-    >
+    <div className={'editor-container'}>
       <CKEditor
         config={{
           extraPlugins: [uploadPlugin],

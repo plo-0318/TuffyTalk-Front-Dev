@@ -35,18 +35,18 @@ const CreatePost = () => {
   }
 
   const createPostHandler = () => {
-    dispatch(mainPageScrollActions.setDisableScroll(true));
+    // dispatch(mainPageScrollActions.setDisableScroll(true));
     setShowCreatePost(true);
   };
 
   const closeCreatePost = useCallback(() => {
-    dispatch(mainPageScrollActions.setDisableScroll(false));
+    // dispatch(mainPageScrollActions.setDisableScroll(false));
     setShowCreatePost(false);
-  }, [dispatch]);
+  }, []);
 
   const postSuccessHandler = useCallback(
     (url) => {
-      dispatch(mainPageScrollActions.setDisableScroll(false));
+      // dispatch(mainPageScrollActions.setDisableScroll(false));
       dispatch(mainPageScrollActions.resetScrollPosition());
       dispatch(postListActions.increase());
       closeCreatePost();
@@ -63,7 +63,6 @@ const CreatePost = () => {
         <CreatePostModal
           show={showCreatePost}
           closeModal={closeCreatePost}
-          formHeight={'60rem'}
           topic={toCamel(currentTopic, '-')}
           onSuccess={postSuccessHandler}
         />

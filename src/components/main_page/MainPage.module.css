@@ -1,4 +1,6 @@
 .main_page-container {
+  position: relative;
+
   max-width: 100vw;
   /* height: 100%; */
   flex: 1;
@@ -21,4 +23,41 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+}
+
+.menu-btn {
+  position: absolute;
+
+  top: 0;
+  right: 0;
+
+  transform: translate(-50%, 50%);
+
+  background-color: #10316b;
+  padding: 1.2rem 1.2rem;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.menu-btn:hover {
+  background-color: #405a89;
+}
+
+.menu-icon {
+  color: rgb(250, 250, 250);
+}
+
+@media (max-width: 1050px) {
+  .main_page-container {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1.2rem;
+  }
+}
+
+@media (max-width: 850px) {
+  .main_page__content-container {
+    width: 90vw;
+  }
 }

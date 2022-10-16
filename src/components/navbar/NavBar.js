@@ -1,100 +1,163 @@
-import { UilSearch, UilSetting } from '@iconscout/react-unicons';
+import { UilSearch, UilSetting, UilBars } from '@iconscout/react-unicons';
 import { useNavigate, NavLink } from 'react-router-dom';
-import { Fragment, useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
+import { Fragment, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { authActions } from '../../store/auth';
+import { CSSTransition } from 'react-transition-group';
 
 import { RESOURCE_URL } from '../../utils/config';
 import useHttp from '../../hooks/use-http';
 import { logout } from '../../utils/sendHttp';
+import { authActions } from '../../store/auth';
 
 import classes from './NavBar.module.css';
 import logo from '../../img/logos/twitter_header_photo_1.png';
 
-const SettingIcon = (props) => {
-  const [settingOpen, setSettingOpen] = useState(false);
-  const [mouseInPopup, setMouseInPopup] = useState(false);
-  const [mouseInIconContainer, setMouseInIconContainer] = useState(false);
-  const [mouseOnSettingIcon, setMouseOnSettingIcon] = useState(false);
+const Backdrop = (props) => {
+  return (
+    <CSSTransition
+      in={props.show}
+      mountOnEnter
+      unmountOnExit
+      timeout={400}
+      classNames={{
+        enter: '',
+        enterActive: classes['backdrop-open'],
+        exit: '',
+        exitActive: classes['backdrop-close'],
+        appear: '',
+        appearActive: '',
+      }}
+    >
+      <div
+        className={classes['modal_backdrop']}
+        onClick={props.closeModal}
+      ></div>
+    </CSSTransition>
+  );
+};
 
-  useEffect(() => {
-    if (settingOpen) {
-      if (!mouseInPopup && !mouseOnSettingIcon && !mouseInIconContainer) {
-        setSettingOpen(false);
-      }
-    }
-  }, [settingOpen, mouseInPopup, mouseOnSettingIcon, mouseInIconContainer]);
+const MenuModal = (props) => {
+  const navigate = useNavigate();
 
-  const iconContainerMouseHoverHandler = () => {
-    setMouseInIconContainer(true);
+  const navigateBtnClickHandler = (path) => {
+    props.closeModal();
+    navigate(path);
   };
 
-  const iconContainerMouseLeaveHandler = () => {
-    setMouseInIconContainer(false);
-  };
-
-  const settingIconHoverHandler = () => {
-    setMouseOnSettingIcon(true);
-
-    if (!settingOpen) {
-      setSettingOpen(true);
-    }
-  };
-
-  const settingIconMoseLeaveHandler = () => {
-    setMouseOnSettingIcon(false);
-  };
-
-  const popupHoverHandler = () => {
-    setMouseInPopup(true);
-  };
-
-  const popupMoseLeaveHandler = () => {
-    setMouseInPopup(false);
+  const logoutClickHandler = () => {
+    props.closeModal();
+    props.onLogout();
   };
 
   return (
-    <div
-      className={classes['icon-container_setting']}
-      onMouseEnter={iconContainerMouseHoverHandler}
-      onMouseLeave={iconContainerMouseLeaveHandler}
+    <CSSTransition
+      in={props.show}
+      mountOnEnter
+      unmountOnExit
+      timeout={400}
+      classNames={{
+        enter: '',
+        enterActive: classes['modal-open'],
+        exit: '',
+        exitActive: classes['modal-close'],
+        appear: '',
+        appearActive: '',
+      }}
     >
-      <div
-        className={classes['icon-wrapper']}
-        onMouseEnter={settingIconHoverHandler}
-        onMouseLeave={settingIconMoseLeaveHandler}
-      >
-        <UilSetting className={classes['icon_setting']} />
-      </div>
-      {settingOpen && (
-        <div
-          className={`${classes['popup-container']}`}
-          onMouseEnter={popupHoverHandler}
-          onMouseLeave={popupMoseLeaveHandler}
-        >
-          <ul className={classes['popup_btn-container']}>
-            {props.isLoggedIn && (
-              <Fragment>
-                <li>
-                  <button className={classes['popup-btn']}>Account</button>
-                </li>
-                <li>
-                  <button
-                    className={classes['popup-btn']}
-                    onClick={props.onLogout}
-                  >
-                    Sign Out
-                  </button>
-                </li>
-              </Fragment>
-            )}
-            <li>
-              <button className={classes['popup-btn']}>Help</button>
-            </li>
-          </ul>
+      <div className={classes['menu_modal-container']}>
+        <div className={classes['menu_modal__header-container']}>
+          <p>Menu</p>
         </div>
+        <ul className={classes['menu_modal__items-container']}>
+          {props.isLoggedIn && (
+            <Fragment>
+              <li>
+                <button
+                  className={classes['menu_modal__item']}
+                  onClick={navigateBtnClickHandler.bind(null, '/me/profile')}
+                >
+                  Account
+                </button>
+              </li>
+              <li>
+                <button
+                  className={classes['menu_modal__item']}
+                  onClick={logoutClickHandler}
+                >
+                  Logout
+                </button>
+              </li>
+            </Fragment>
+          )}
+
+          {!props.isLoggedIn && (
+            <Fragment>
+              <li>
+                <button
+                  className={classes['menu_modal__item']}
+                  onClick={navigateBtnClickHandler.bind(null, '/signup')}
+                >
+                  Sign Up
+                </button>
+              </li>
+              <li>
+                <button
+                  className={classes['menu_modal__item']}
+                  onClick={navigateBtnClickHandler.bind(null, '/signin')}
+                >
+                  Sign In
+                </button>
+              </li>
+            </Fragment>
+          )}
+
+          <li>
+            <button
+              className={classes['menu_modal__item']}
+              onClick={navigateBtnClickHandler.bind(null, '/')}
+            >
+              Help
+            </button>
+          </li>
+        </ul>
+      </div>
+    </CSSTransition>
+  );
+};
+
+const Menu = (props) => {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const menuClickHandler = () => {
+    setMenuOpen(true);
+  };
+
+  const closeModal = () => {
+    setMenuOpen(false);
+  };
+
+  return (
+    <Fragment>
+      {ReactDOM.createPortal(
+        <Backdrop show={menuOpen} closeModal={closeModal} />,
+        document.getElementById('backdrop-root')
       )}
-    </div>
+      {ReactDOM.createPortal(
+        <MenuModal
+          closeModal={closeModal}
+          show={menuOpen}
+          isLoggedIn={props.isLoggedIn}
+          onLogout={props.onLogout}
+        />,
+        document.getElementById('overlay-root')
+      )}
+      <div className={classes['menu_icon-container']}>
+        <div className={classes['icon-wrapper']} onClick={menuClickHandler}>
+          <UilBars className={classes['icon_setting']} />
+        </div>
+      </div>
+    </Fragment>
   );
 };
 
@@ -114,12 +177,14 @@ const AuthLinks = (props) => (
       </NavLink>
     </li>
     <li className={classes['setting-container']}>
-      <SettingIcon isLoggedIn={props.isLoggedIn} />
+      <Menu isLoggedIn={props.isLoggedIn} />
     </li>
   </ul>
 );
 
 const UserLinks = (props) => {
+  const navigate = useNavigate();
+
   const userImg =
     props.user.profilePicture === 'user-placeholder.png'
       ? `${RESOURCE_URL}/img/users/user-placeholder.png`
@@ -128,15 +193,21 @@ const UserLinks = (props) => {
   return (
     <ul className={classes['nav_links-container']}>
       <li className={classes['user_img-container']}>
-        <img src={userImg} alt='user' />
+        <img
+          src={userImg}
+          alt='user'
+          onClick={() => {
+            navigate('/me/profile');
+          }}
+        />
       </li>
-      <li>
+      <li className={classes['user_link-container']}>
         <NavLink className={classes['user_link']} to='/me/profile'>
           {props.user.username}
         </NavLink>
       </li>
       <li className={classes['setting-container']}>
-        <SettingIcon onLogout={props.onLogout} isLoggedIn={props.isLoggedIn} />
+        <Menu onLogout={props.onLogout} isLoggedIn={props.isLoggedIn} />
       </li>
     </ul>
   );
@@ -148,6 +219,8 @@ const NavBar = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
+
+  const searchInputRef = useRef();
 
   const {
     sendRequest: _logout,
@@ -162,6 +235,18 @@ const NavBar = () => {
     navigate('/', { replace: true });
   };
 
+  const searchClickHandler = () => {
+    const searchTerm = searchInputRef.current.value.trim();
+
+    if (searchTerm === '') {
+      return;
+    }
+
+    searchInputRef.current.value = '';
+
+    navigate(`/search/${searchTerm}`);
+  };
+
   return (
     <nav className={classes['nav-container']}>
       <div
@@ -174,11 +259,15 @@ const NavBar = () => {
       </div>
       <div className={classes['search_bar-container']}>
         <input
+          ref={searchInputRef}
           type='text'
-          placeholder='Are cats better than dogs?'
+          placeholder='Search...'
           className={classes['search_bar-input']}
         />
-        <div className={classes['icon-container_sticky']}>
+        <div
+          className={classes['icon-container_sticky']}
+          onClick={searchClickHandler}
+        >
           <UilSearch className={classes['icon_search']} />
         </div>
       </div>

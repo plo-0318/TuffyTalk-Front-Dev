@@ -17,6 +17,7 @@ import { authActions } from '../../../store/auth';
 import { currentPostActions } from '../../../store/currentPost';
 import { mainPageScrollActions } from '../../../store/mainPageScroll';
 import { postListActions } from '../../../store/postList';
+import { searchActions } from '../../../store/search';
 import { userProfileDataActions } from '../../../store/userProfileData';
 import { RESOURCE_URL } from '../../../utils/config';
 import {
@@ -47,7 +48,7 @@ const Backdrop = (props) => {
   const { sendRequest: toggleLikePost } = useHttp(sendHttp);
 
   const backdropClickHandler = () => {
-    dispatch(mainPageScrollActions.setDisableScroll(false));
+    // dispatch(mainPageScrollActions.setDisableScroll(false));
 
     if (props.userLikePostChanged) {
       const submitOptions = {
@@ -197,7 +198,7 @@ const PostModal = memo((props) => {
     updatedPostData,
   ]);
 
-  // If author deleted post, go back to topic
+  // If author deleted post, go back to previous page
   useEffect(() => {
     if (deletePostStatus === 'completed' && deletePostError) {
       setModalState({ show: true, status: 'fail', message: deletePostError });
@@ -205,9 +206,15 @@ const PostModal = memo((props) => {
     }
 
     if (deletePostStatus === 'completed' && !deletePostError) {
-      dispatch(mainPageScrollActions.setDisableScroll(false));
-      dispatch(postListActions.increase());
-      // navigate(`/topic/${camelToDash(postData.topic.name)}`, { replace: true });
+      // dispatch(mainPageScrollActions.setDisableScroll(false));
+
+      if (basePath.startsWith('/topic')) {
+        dispatch(postListActions.increase());
+      }
+
+      if (basePath.startsWith('/search')) {
+        dispatch(searchActions.tick());
+      }
 
       if (basePath.startsWith('/me')) {
         dispatch(userProfileDataActions.removePost(postData));
@@ -283,7 +290,7 @@ const PostModal = memo((props) => {
   };
 
   const editPostClickHandler = () => {
-    dispatch(mainPageScrollActions.setDisableScroll(true));
+    // dispatch(mainPageScrollActions.setDisableScroll(true));
     setShowEditPost(true);
   };
 
@@ -470,16 +477,23 @@ const PostDetail = (props) => {
   const [userLikePostChanged, setUserLikePostChanged] = useState(false);
   const navigate = useNavigate();
 
-  const { postId, topicName } = useParams();
+  const { postId } = useParams();
 
-  const paths = useLocation().pathname.split('/');
+  const location = useLocation();
+  const paths = location.pathname.split('/');
   const basePath = `/${paths[1]}/${paths[2]}`;
 
-  const options = basePath.startsWith('/topic')
-    ? { state: { restoreScroll: true } }
-    : {};
+  let options = {};
+
+  if (basePath.startsWith('/topic') || basePath.startsWith('/search')) {
+    options.state = { restoreScroll: true };
+  }
 
   const onBackdropClick = () => {
+    if (props.onClose) {
+      props.onClose();
+    }
+
     navigate(basePath, options);
   };
 
@@ -487,7 +501,6 @@ const PostDetail = (props) => {
     <Fragment>
       {ReactDOM.createPortal(
         <Backdrop
-          // onBackdropClick={props.onBackdropClick}
           onBackdropClick={onBackdropClick}
           userLikePostChanged={userLikePostChanged}
           postId={postId}

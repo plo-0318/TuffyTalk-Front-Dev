@@ -2,12 +2,13 @@
   width: 100%;
 
   padding: 1.2rem 2.4rem;
+  padding-bottom: 3.6rem;
 }
 
 .bookmarks_background-container {
   list-style: none;
   width: 100%;
-  height: 55rem;
+  height: 50rem;
 
   background-color: rgb(250, 250, 250);
   border-radius: 6px;
@@ -116,4 +117,99 @@
   font-size: 2.4rem;
   color: #666;
   text-align: center;
+}
+
+@media (max-width: 710px) {
+  .bookmarks_background-container {
+    height: 45rem;
+  }
+
+  .bookmark_item-container {
+    height: 8rem;
+
+    padding: 1.2rem 1.2rem;
+
+    gap: 0.8rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .bookmarks_background-container {
+    height: 38rem;
+  }
+
+  .bookmark_item-container {
+    height: 6rem;
+
+    padding: 1rem;
+
+    gap: 0.8rem;
+  }
+
+  .bookmark_item__topic-text {
+    font-size: 1.3rem;
+  }
+
+  .bookmark_item__createdAt-text {
+    margin-left: 1.2rem;
+
+    font-size: 1.3rem;
+  }
+
+  .bookmark_item__title-text {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .bookmark_item-container {
+    height: 4.8rem;
+
+    padding: 0.8rem;
+
+    gap: 0.8rem;
+  }
+
+  .bookmark_item__topic-text {
+    font-size: 1.2rem;
+  }
+
+  .bookmark_item__createdAt-text {
+    margin-left: 1.2rem;
+
+    font-size: 1.2rem;
+  }
+
+  .bookmark_item__title-text {
+    font-size: 1.2rem;
+  }
+}
+@media (max-width: 400px) {
+  .bookmark_item-container {
+    height: 4.2rem;
+
+    padding: 0.6rem;
+
+    gap: 0.8rem;
+  }
+
+  .bookmark_item__topic-text {
+    font-size: 1.1rem;
+  }
+
+  .bookmark_item__createdAt-text {
+    margin-left: 1rem;
+
+    font-size: 1rem;
+  }
+
+  .bookmark_item__title-text {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .bookmark_item__createdAt-text {
+    display: none;
+  }
 }

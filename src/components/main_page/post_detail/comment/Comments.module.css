@@ -37,3 +37,35 @@
   font-size: 1.8rem;
   color: #666;
 }
+
+@media (max-width: 750px) {
+  .comments-container {
+    padding: 4.2rem 3.6rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .comments-container {
+    padding: 3.2rem 2.8rem;
+  }
+
+  .comments-title {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .comments-container {
+    padding: 2.4rem 1.8rem;
+  }
+
+  .comments-title {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .comments-title {
+    font-size: 1.5rem;
+  }
+}

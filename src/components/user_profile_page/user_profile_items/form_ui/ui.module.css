@@ -63,3 +63,29 @@
   align-items: flex-start;
   gap: 0.6rem;
 }
+
+@media (max-width: 600px) {
+  .form_input {
+    padding: 0.8rem 0.8rem;
+    box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.1);
+
+    font-size: 1.4rem;
+  }
+
+  .form_input::placeholder {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .form_input {
+    padding: 0.6rem 0.6rem;
+    box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.1);
+
+    font-size: 1.2rem;
+  }
+
+  .form_input::placeholder {
+    font-size: 1.2rem;
+  }
+}

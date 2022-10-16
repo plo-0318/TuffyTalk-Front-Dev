@@ -49,7 +49,6 @@ const LeaveComment = (props) => {
         <LeaveCommentModal
           show={showCommentModal}
           closeModal={closeCommentModal}
-          containerHeight={'60rem'}
           onSuccess={commentSuccessHandler}
         />
       )}

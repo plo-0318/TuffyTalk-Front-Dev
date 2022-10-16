@@ -67,3 +67,17 @@
 .signin_link:hover {
   color: #586f97;
 }
+
+@media (max-width: 500px) {
+  .create_post-container {
+    height: 4.2em;
+
+    padding: 0.6rem 2.4rem;
+  }
+
+  .create_post-container button {
+    font-size: 1.2rem;
+
+    padding: 0.4rem 0.8rem;
+  }
+}

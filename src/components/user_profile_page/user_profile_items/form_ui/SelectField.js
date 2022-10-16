@@ -39,6 +39,14 @@ const SelectField = (props) => {
       ...styles,
       width: '24rem',
       borderRadius: '6px',
+      '@media only screen and (max-width: 600px)': {
+        ...styles['@media only screen and (max-width: 600px)'],
+        width: '20rem',
+      },
+      '@media only screen and (max-width: 500px)': {
+        ...styles['@media only screen and (max-width: 500px)'],
+        width: '16rem',
+      },
     }),
 
     control: (styles, state) => ({
@@ -55,17 +63,48 @@ const SelectField = (props) => {
     option: (styles, state) => {
       // const { data, isDisable, isFocused, isSelected } = state;
 
-      return { ...styles, fontSize: '1.6rem' };
+      return {
+        ...styles,
+        fontSize: '1.6rem',
+        '@media only screen and (max-width: 600px)': {
+          ...styles['@media only screen and (max-width: 600px)'],
+          fontSize: '1.4rem',
+        },
+        '@media only screen and (max-width: 500px)': {
+          ...styles['@media only screen and (max-width: 500px)'],
+          fontSize: '1.2rem',
+        },
+      };
     },
 
     singleValue: (styles, state) => {
       // const { data, isDisable, isFocused, isSelected } = state;
 
-      return { ...styles, fontSize: '1.6rem' };
+      return {
+        ...styles,
+        fontSize: '1.6rem',
+        '@media only screen and (max-width: 600px)': {
+          ...styles['@media only screen and (max-width: 600px)'],
+          fontSize: '1.4rem',
+        },
+        '@media only screen and (max-width: 500px)': {
+          ...styles['@media only screen and (max-width: 500px)'],
+          fontSize: '1.2rem',
+        },
+      };
     },
 
     input: (styles) => {
-      return { ...styles, fontSize: '1.4rem', color: '#555' };
+      return {
+        ...styles,
+        fontSize: '1.4rem',
+        color: '#555',
+        '@media only screen and (max-width: 600px)': {
+          ...styles['@media only screen and (max-width: 600px)'],
+          fontSize: '1.2rem',
+          color: '#555',
+        },
+      };
     },
   };
 

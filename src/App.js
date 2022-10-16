@@ -1,9 +1,10 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 import { authActions } from './store/auth';
+import { mainPageScrollActions } from './store/mainPageScroll';
 import useHttp from './hooks/use-http';
 import { loginWithJWT } from './utils/sendHttp';
 
@@ -21,8 +22,8 @@ import classes from './App.module.css';
 import { Fragment } from 'react';
 
 function App() {
-  const navigate = useNavigate();
   const location = useLocation();
+  const { pathname } = location;
 
   const disableScroll = useSelector(
     (state) => state.mainPageScroll.disableScroll
@@ -59,10 +60,18 @@ function App() {
   }, [userData, dispatch, loginStatus]);
 
   useEffect(() => {
-    if (location.state && location.state.restoreScroll) {
+    if (pathname.split('/').length > 3) {
+      dispatch(mainPageScrollActions.setDisableScroll(true));
+    } else {
+      dispatch(mainPageScrollActions.setDisableScroll(false));
+    }
+  }, [pathname, dispatch]);
+
+  useEffect(() => {
+    if (!disableScroll && location.state && location.state.restoreScroll) {
       window.scrollTo(0, savedScrollPos);
     }
-  }, [location, savedScrollPos]);
+  }, [location, savedScrollPos, disableScroll]);
 
   return (
     <div className={`${classes['app-container']} ${scrollClass}`}>
@@ -76,20 +85,16 @@ function App() {
               element={<Navigate replace to='/topic/general' />}
             />
             <Route path='/topic/:topicName' element={<MainPage />}>
-              <Route
-                path='post/:postId'
-                element={<PostDetail onBackdropClick={() => navigate(-1)} />}
-              />
+              <Route path='post/:postId' element={<PostDetail />} />
             </Route>
             <Route path='/signup' element={<Signup />} />
             <Route path='/signin' element={<SigninForm />} />
             <Route path='/me/:tab' element={<UserProfile />}>
-              <Route
-                path=':postId'
-                element={<PostDetail onBackdropClick={() => navigate(-1)} />}
-              />
+              <Route path=':postId' element={<PostDetail />} />
             </Route>
-            <Route path='/search' element={<SearchResult />} />
+            <Route path='/search/:searchTerm' element={<SearchResult />}>
+              <Route path='post/:postId' element={<PostDetail />} />
+            </Route>
             <Route path='*' element={<ErrorPage />} />
           </Routes>
         </Fragment>
@@ -101,5 +106,4 @@ function App() {
 export default App;
 
 //TODO: change post pages change url (maybe later)
-
-//TODO: responsive (later later)
+//TODO: email verification?

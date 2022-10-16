@@ -2,7 +2,6 @@
   position: relative;
 
   width: 100%;
-  height: var(--container-height);
 
   box-shadow: 0 0 5px 1.5px rgba(0, 0, 0, 0.1);
 }
@@ -30,10 +29,11 @@
 }
 
 .editor-container .ck-editor__editable {
-  height: calc(var(--container-height) - 4rem);
+  /* height: calc(var(--container-height) - 4rem); */
+  min-height: 20rem;
 
   font-size: 1.4rem;
-  line-height: 3.2rem;
+  line-height: 2.4rem;
 }
 
 .ck.ck-content ul,
@@ -53,4 +53,50 @@
 .ck.ck-content ol {
   /* Default user agent stylesheet, you can change it to your needs. */
   padding-left: 40px;
+}
+
+.ck.ck-sticky-panel .ck-sticky-panel__content_sticky {
+  position: absolute !important;
+}
+
+@media (max-width: 600px) {
+  .editor-container .ck-editor__editable {
+    /* height: calc(var(--container-height) - 4rem); */
+    min-height: 15rem;
+
+    font-size: 1.2rem;
+    line-height: 2rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .editor_submit-btn {
+    padding: 0.4rem 2rem;
+
+    font-size: 1.4rem;
+  }
+
+  .editor-container .ck-editor__editable {
+    /* height: calc(var(--container-height) - 4rem); */
+    min-height: 15rem;
+
+    font-size: 1.2rem;
+    line-height: 1.8rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .editor_submit-btn {
+    padding: 0.2rem 1.2rem;
+
+    font-size: 1.2rem;
+  }
+
+  .editor-container .ck-editor__editable {
+    /* height: calc(var(--container-height) - 4rem); */
+    min-height: 10rem;
+
+    font-size: 1.1rem;
+    line-height: 1.6rem;
+  }
 }

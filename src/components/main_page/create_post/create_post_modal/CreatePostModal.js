@@ -88,11 +88,6 @@ const ModalOverlay = (props) => {
     topic,
   ]);
 
-  const formHeight = props.formHeight || '60rem';
-  const editorHeight = `${Math.trunc(
-    Number.parseFloat(formHeight, 10) * 0.75
-  )}rem`;
-
   const postChangeHandler = (content) => {
     setPostContent(content);
   };
@@ -202,7 +197,7 @@ const ModalOverlay = (props) => {
       />
       <div className={classes['modal-container']}>
         <div className={classes['modal_header-container']}>
-          <p>Create a post</p>
+          <p>{isEdit ? 'Edit post' : 'Create a post'}</p>
         </div>
         <hr />
         <form className={classes['modal-form']}>
@@ -220,7 +215,6 @@ const ModalOverlay = (props) => {
           </div>
           <TextEditor
             useProxy={true}
-            containerHeight={editorHeight}
             submitHandler={postSubmitHandler}
             onChange={postChangeHandler}
             onEditorReady={editorReadyHandler}
@@ -247,7 +241,6 @@ const CreatePostModal = (props) => {
       {ReactDOM.createPortal(
         <ModalOverlay
           closeModal={props.closeModal}
-          formHeight={props.formHeight}
           topic={props.topic}
           isEdit={isEdit}
           onEditorReady={props.onEditorReady}

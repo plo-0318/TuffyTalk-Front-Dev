@@ -1,5 +1,5 @@
 .form-container {
-  max-width: 40rem;
+  width: 40rem;
 
   margin: 4.8rem auto;
   margin-top: 8rem;
@@ -47,4 +47,16 @@
 
 .sign_up-link:hover {
   background-color: #ffec99;
+}
+
+@media (max-width: 750px) {
+  .form-container {
+    margin-top: 4rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .form-container {
+    width: 90vw;
+  }
 }

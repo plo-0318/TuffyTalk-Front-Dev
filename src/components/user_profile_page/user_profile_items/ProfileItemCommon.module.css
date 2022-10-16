@@ -53,3 +53,80 @@
   background-color: #999;
   cursor: not-allowed;
 }
+
+@media (max-width: 710px) {
+  .user_info-container {
+    padding: 4.2rem 4.2rem;
+    padding-top: 8.2rem;
+  }
+
+  .user_info_header-container > p {
+    font-size: 3.2rem;
+    letter-spacing: -0.5px;
+  }
+}
+
+@media (max-width: 600px) {
+  .user_info-container {
+    padding: 3.2rem 3.2rem;
+    padding-top: 7.2rem;
+  }
+
+  .user_info_header-container > p {
+    font-size: 2.4rem;
+    letter-spacing: -0.5px;
+  }
+
+  .form-container {
+    gap: 2.4rem;
+  }
+
+  .form_submit-btn {
+    font-size: 1.4rem;
+    padding: 1rem 2rem;
+    margin-top: 2rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .user_info-container {
+    padding: 2.4rem 2.4rem;
+    padding-top: 6.4rem;
+  }
+
+  .user_info_header-container > p {
+    font-size: 1.8rem;
+    letter-spacing: 0;
+  }
+
+  .form-container {
+    gap: 1.6rem;
+  }
+
+  .form_submit-btn {
+    font-size: 1.2rem;
+    padding: 0.6rem 1.4rem;
+    margin-top: 1.2rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .user_info-container {
+    padding: 1.6rem 1.6rem;
+    padding-top: 4.8rem;
+  }
+
+  .user_info_header-container > p {
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+  }
+
+  .form-container {
+    gap: 1.2rem;
+  }
+
+  .form_submit-btn {
+    padding: 0.4rem 1.2rem;
+    margin-top: 0.8rem;
+  }
+}

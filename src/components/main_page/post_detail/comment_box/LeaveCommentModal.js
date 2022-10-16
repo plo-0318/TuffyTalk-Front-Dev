@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import useHttp from '../../../../hooks/use-http';
 import { sendHttp } from '../../../../utils/sendHttp';
 import Modal from '../../../ui/modal/Modal';
 import TextEditor from '../../../ui/text_editor/TextEditor';
-import { camelToSpace } from '../../../../utils/util';
 
 import classes from './LeaveCommentModal.module.css';
 
@@ -79,11 +78,6 @@ const ModalOverlay = (props) => {
     isEdit,
     resetSubmitComment,
   ]);
-
-  const containerHeight = props.containerHeight || '60rem';
-  const editorHeight = `${Math.trunc(
-    Number.parseFloat(containerHeight, 10) * 0.75
-  )}rem`;
 
   const editorChangeHandler = (content) => {
     setEditorContent(content);
@@ -180,13 +174,12 @@ const ModalOverlay = (props) => {
       />
       <div className={classes['modal-container']}>
         <div className={classes['modal_header-container']}>
-          <p>Leave a comment</p>
+          <p>{isEdit ? 'Edit comment' : 'Leave a comment'}</p>
         </div>
         <hr />
 
         <TextEditor
           useProxy={true}
-          containerHeight={editorHeight}
           submitHandler={editorSubmitHandler}
           onChange={editorChangeHandler}
           onEditorReady={editorReadyHandler}
@@ -212,7 +205,6 @@ const LeaveCommentModal = (props) => {
       {ReactDOM.createPortal(
         <ModalOverlay
           closeModal={props.closeModal}
-          containerHeight={props.containerHeight}
           isEdit={isEdit}
           onEditorReady={props.onEditorReady}
           editData={props.editData}

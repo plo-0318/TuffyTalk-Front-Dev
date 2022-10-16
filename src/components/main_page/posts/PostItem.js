@@ -50,7 +50,7 @@ const PostItem = (props) => {
     : null;
 
   const postClickHandler = () => {
-    dispatch(mainPageScrollActions.setDisableScroll(true));
+    // dispatch(mainPageScrollActions.setDisableScroll(true));
     dispatch(mainPageScrollActions.saveScrollPosition());
     navigate(`${location.pathname}/post/${postData._id}`);
   };
@@ -62,11 +62,18 @@ const PostItem = (props) => {
 
   const pRegex = /(?<=(<p>)\s*).*?(?=\s*<)/s;
   const liRegex = /(?<=(<li>)\s*).*?(?=\s*<)/s;
+  const htmlElementRegex = /(?<=(&)\s*).*?(?=\s*;)/s;
 
   const p = postData.content.match(pRegex);
   const li = postData.content.match(liRegex);
 
   let content = p ? p[0] : li ? li[0] : '';
+
+  const result = content.match(htmlElementRegex);
+
+  if (result && result[0]) {
+    content = content.replace(`&${result[0]};`, '');
+  }
 
   return (
     <div className={classes['post-container']} onClick={postClickHandler}>
@@ -80,8 +87,10 @@ const PostItem = (props) => {
 
       <div className={classes['main_content-container']}>
         <div className={titleContentClasses}>
-          <p className={classes['title-text']}>{postData.title}</p>
-          <p className={classes['content-text']}>{content}</p>
+          <div className={classes['title_content__text-container']}>
+            <p className={classes['title-text']}>{postData.title}</p>
+            <p className={classes['content-text']}>{content}</p>
+          </div>
           <div className={classes['footer-container']}>
             <UilThumbsUp className={classes['footer-icon']} />
             <p>{postData.likes}</p>

@@ -51,3 +51,20 @@
 .nav_link:hover {
   color: #405a89;
 }
+
+@media (max-width: 750px) {
+  .signup-container {
+    width: 40rem;
+    margin-top: 4rem;
+  }
+
+  .description-container {
+    display: none;
+  }
+}
+
+@media (max-width: 500px) {
+  .signup-container {
+    width: 90vw;
+  }
+}

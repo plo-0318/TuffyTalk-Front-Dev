@@ -5,6 +5,7 @@ import MainHeader from './main_page_header/MainHeader';
 import CreatePost from './create_post/CreatePost';
 import Posts from './posts/Posts';
 import TopicList from './topic_list/TopicList';
+import { UilBars } from '@iconscout/react-unicons';
 
 import useHttp from '../../hooks/use-http';
 import { sendHttp } from '../../utils/sendHttp';

@@ -4,6 +4,7 @@ import mainPageScrollReducer from './mainPageScroll';
 import currentPostReducer from './currentPost';
 import postListReducer from './postList';
 import userProfileDataReducer from './userProfileData';
+import searchReducer from './search';
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     currentPost: currentPostReducer,
     postList: postListReducer,
     userProfileData: userProfileDataReducer,
+    search: searchReducer,
   },
 });
 
