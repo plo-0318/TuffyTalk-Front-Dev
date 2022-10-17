@@ -101,7 +101,11 @@ const ModalOverlay = (props) => {
       images.push(img[1]);
     }
 
-    const names = images.map((img) => img.split('/').at(-1));
+    const names = images.map((img) => {
+      const name = img.split('/');
+
+      return name[name.length - 1];
+    });
 
     const body = {
       content: editorContent,
@@ -179,7 +183,7 @@ const ModalOverlay = (props) => {
         <hr />
 
         <TextEditor
-          useProxy={true}
+          useProxy={false}
           submitHandler={editorSubmitHandler}
           onChange={editorChangeHandler}
           onEditorReady={editorReadyHandler}

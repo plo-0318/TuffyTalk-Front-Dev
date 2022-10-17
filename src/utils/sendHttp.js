@@ -38,7 +38,8 @@ export const sendHttp = async ({
 };
 
 export const loginWithJWT = async (useProxy) => {
-  const url = useProxy ? PROXY_API_URL : API_URL;
+  // const url = useProxy ? PROXY_API_URL : API_URL;
+  const url = API_URL;
 
   const res = await fetch(`${url}/users/is-logged-in`, {
     method: 'GET',

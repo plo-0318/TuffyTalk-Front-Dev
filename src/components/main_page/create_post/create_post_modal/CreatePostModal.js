@@ -127,7 +127,11 @@ const ModalOverlay = (props) => {
       images.push(img[1]);
     }
 
-    const names = images.map((img) => img.split('/').at(-1));
+    const names = images.map((img) => {
+      const name = img.split('/');
+
+      return name[name.length - 1];
+    });
 
     const body = JSON.stringify({
       topic: topic || null,
@@ -214,7 +218,7 @@ const ModalOverlay = (props) => {
             />
           </div>
           <TextEditor
-            useProxy={true}
+            useProxy={false}
             submitHandler={postSubmitHandler}
             onChange={postChangeHandler}
             onEditorReady={editorReadyHandler}

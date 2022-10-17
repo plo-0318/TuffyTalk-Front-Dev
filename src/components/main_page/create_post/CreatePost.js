@@ -18,10 +18,12 @@ const CreatePost = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const paths = location.pathname.split('/');
+
   const currentTopic =
-    location.pathname.split('/').at(-1) === ''
-      ? location.pathname.split('/').at(-2)
-      : location.pathname.split('/').at(-1);
+    paths[paths.length - 1] === ''
+      ? paths[paths.length - 2]
+      : paths[paths.length - 1];
 
   const [showCreatePost, setShowCreatePost] = useState(false);
 
