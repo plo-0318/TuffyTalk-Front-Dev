@@ -60,19 +60,27 @@ const PostItem = (props) => {
       ? `${RESOURCE_URL}/img/users/user-placeholder.png`
       : `${RESOURCE_URL}/img/users/${postData.author._id}/${postData.author.profilePicture}`;
 
-  const pRegex = /(?<=(<p>)\s*).*?(?=\s*<)/s;
-  const liRegex = /(?<=(<li>)\s*).*?(?=\s*<)/s;
-  const htmlElementRegex = /(?<=(&)\s*).*?(?=\s*;)/s;
+  const pRegex = /(<p>).+?(>)/s;
+  const liRegex = /(<li>).+?(>)/s;
+  const htmlElementRegex = /(&).+?(;)/s;
 
   const p = postData.content.match(pRegex);
   const li = postData.content.match(liRegex);
 
-  let content = p ? p[0] : li ? li[0] : '';
+  let content = '';
+
+  if (p) {
+    content = p[0];
+    content = content.slice(3, -4);
+  } else if (li) {
+    content = li[0];
+    content = content.slice(4, -5);
+  }
 
   const result = content.match(htmlElementRegex);
 
   if (result && result[0]) {
-    content = content.replace(`&${result[0]};`, '');
+    content = content.replace(`${result[0]}`, '');
   }
 
   return (

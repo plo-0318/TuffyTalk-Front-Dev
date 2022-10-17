@@ -193,3 +193,51 @@
     max-width: 90vw;
   }
 }
+
+@media (max-width: 600px) {
+  .dropdown_item:link,
+  .dropdown_item:active,
+  .dropdown_item:visited {
+    gap: 1rem;
+
+    padding: 0.64rem 1rem;
+
+    font-size: 1.2rem;
+  }
+
+  .dropdown_topic-img {
+    width: 1.8rem;
+  }
+}
+
+@media (max-width: 510px) {
+  .dropdown_item:link,
+  .dropdown_item:active,
+  .dropdown_item:visited {
+    gap: 0.8rem;
+
+    padding: 0.64rem 0.8rem;
+
+    font-size: 1.1rem;
+  }
+
+  .dropdown_topic-img {
+    width: 1.6rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .dropdown_item:link,
+  .dropdown_item:active,
+  .dropdown_item:visited {
+    gap: 0.8rem;
+
+    padding: 0.64rem 0.64rem;
+
+    font-size: 1rem;
+  }
+
+  .dropdown_topic-img {
+    width: 1.4rem;
+  }
+}
