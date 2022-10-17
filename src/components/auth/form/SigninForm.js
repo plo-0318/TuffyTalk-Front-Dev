@@ -109,7 +109,7 @@ const SigninForm = () => {
 
     const submitOptions = {
       path: '/users/login',
-      useProxy: true,
+      useProxy: false,
       options: {
         method: 'POST',
         credentials: 'include',

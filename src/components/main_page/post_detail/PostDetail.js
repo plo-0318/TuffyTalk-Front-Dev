@@ -53,7 +53,7 @@ const Backdrop = (props) => {
     if (props.userLikePostChanged) {
       const submitOptions = {
         path: `/user-actions/toggle-like-post/${props.postId}`,
-        useProxy: true,
+        useProxy: false,
         options: {
           method: 'PATCH',
           credentials: 'include',
@@ -248,7 +248,7 @@ const PostModal = memo((props) => {
 
     const fetchOptions = {
       path: '/user-actions/toggle-bookmark',
-      useProxy: true,
+      useProxy: false,
       options: {
         method: 'PATCH',
         credentials: 'include',
@@ -316,7 +316,7 @@ const PostModal = memo((props) => {
 
     const options = {
       path: `/user-actions/delete-post/${postData._id}`,
-      useProxy: true,
+      useProxy: false,
       options: {
         method: 'DELETE',
         credentials: 'include',

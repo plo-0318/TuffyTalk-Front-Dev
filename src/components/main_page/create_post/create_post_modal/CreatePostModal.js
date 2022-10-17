@@ -142,7 +142,7 @@ const ModalOverlay = (props) => {
     if (!isEdit) {
       submitOptions = {
         path: '/user-actions/create-post',
-        useProxy: true,
+        useProxy: false,
         options: {
           method: 'POST',
           credentials: 'include',
@@ -157,7 +157,7 @@ const ModalOverlay = (props) => {
     else {
       submitOptions = {
         path: `/user-actions/update-post/${editData.postId}`,
-        useProxy: true,
+        useProxy: false,
         options: {
           method: 'PATCH',
           credentials: 'include',

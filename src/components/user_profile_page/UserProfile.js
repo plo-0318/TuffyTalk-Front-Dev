@@ -92,7 +92,7 @@ const UserProfile = () => {
 
     const submitOptions = {
       path: '/user-actions/update-me',
-      useProxy: true,
+      useProxy: false,
       options: {
         method: 'PATCH',
         credentials: 'include',

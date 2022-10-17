@@ -87,7 +87,11 @@ const UserProfilePosts = (props) => {
 
     fetchPosts({
       path,
-      useProxy: true,
+      useProxy: false,
+      options: {
+        method: 'GET',
+        credentials: 'include',
+      },
     });
   }, [fetchPosts, type, user]);
 

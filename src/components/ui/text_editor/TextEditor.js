@@ -17,7 +17,7 @@ const TextEditor = (props) => {
     return () => {
       const submitOptions = {
         path: '/user-actions/delete-temp-upload',
-        useProxy: true,
+        useProxy: false,
         options: {
           method: 'DELETE',
           credentials: 'include',

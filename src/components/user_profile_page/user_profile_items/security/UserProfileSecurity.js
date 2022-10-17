@@ -50,7 +50,7 @@ const UserProfileSecurity = () => {
 
     const submitOptions = {
       path: '/user-actions/update-my-password',
-      useProxy: true,
+      useProxy: false,
       options: {
         method: 'PATCH',
         credentials: 'include',

@@ -229,7 +229,7 @@ const NavBar = () => {
   } = useHttp(logout);
 
   const logoutHandler = () => {
-    _logout(true);
+    _logout(false);
     dispatch(authActions.setUser(null));
     dispatch(authActions.logout());
     navigate('/', { replace: true });

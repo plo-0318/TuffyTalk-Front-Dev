@@ -178,7 +178,7 @@ const SignupForm = () => {
 
     const submitOptions = {
       path: '/users/signup',
-      useProxy: true,
+      useProxy: false,
       options: {
         method: 'POST',
         credentials: 'include',

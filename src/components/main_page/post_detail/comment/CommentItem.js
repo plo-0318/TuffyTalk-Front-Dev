@@ -130,7 +130,7 @@ const CommentContent = (props) => {
 
     const submitOptions = {
       path: `/user-actions/toggle-like-comment/${commentData._id}`,
-      useProxy: true,
+      useProxy: false,
       options: {
         method: 'PATCH',
         credentials: 'include',
@@ -195,7 +195,7 @@ const CommentContent = (props) => {
 
     const options = {
       path: `/user-actions/delete-comment/${commentData._id}`,
-      useProxy: true,
+      useProxy: false,
       options: {
         method: 'DELETE',
         credentials: 'include',

@@ -45,7 +45,7 @@ function App() {
   } = useHttp(loginWithJWT);
 
   useEffect(() => {
-    loginJWT(true);
+    loginJWT(false);
   }, [loginJWT]);
 
   useEffect(() => {
@@ -73,11 +73,26 @@ function App() {
     }
   }, [location, savedScrollPos, disableScroll]);
 
+  const foo = async () => {
+    const res = await fetch(
+      'https://tuffytalkapi.herokuapp.com/api/v1/user-actions/get-my-bookmarked-posts',
+      {
+        method: 'GET',
+        credentials: 'include',
+      }
+    );
+
+    const data = await res.json();
+
+    console.log(data);
+  };
+
   return (
     <div className={`${classes['app-container']} ${scrollClass}`}>
       {!render && <LoadingSpinner />}
       {render && (
         <Fragment>
+          <button onClick={foo}>test</button>
           <NavBar />
           <Routes>
             <Route
