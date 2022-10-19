@@ -1,8 +1,8 @@
 export const PRODUCTION = true;
 export const RESOURCE_URL = PRODUCTION
-  ? 'https://tuffytalkapi.herokuapp.com'
+  ? 'https://tuffytalk.herokuapp.com'
   : 'http://127.0.0.1:5000';
-export const API_URL = 'https://tuffytalkapi.herokuapp.com/api/v1';
+export const API_URL = 'https://tuffytalk.herokuapp.com/api/v1';
 export const PROXY_API_URL = '/api/v1';
 export const USE_PROXY = !PRODUCTION;
 
