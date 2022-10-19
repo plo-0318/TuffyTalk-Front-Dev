@@ -109,7 +109,6 @@ const SigninForm = () => {
 
     const submitOptions = {
       path: '/users/login',
-      useProxy: false,
       options: {
         method: 'POST',
         credentials: 'include',
@@ -151,8 +150,8 @@ const SigninForm = () => {
           >
             <input
               className={emailError ? signupClasses['input_error'] : ''}
-              type='email'
-              placeholder='Your email'
+              type="email"
+              placeholder="Your email"
               value={emailInput}
               onChange={emailChangeHandler}
               onBlur={emailBlurHandler}
@@ -169,8 +168,8 @@ const SigninForm = () => {
           >
             <input
               className={passwordError ? signupClasses['input_error'] : ''}
-              type='password'
-              placeholder='Your password'
+              type="password"
+              placeholder="Your password"
               value={passwordInput}
               onChange={passwordChangeHandler}
               onBlur={passwordBlurHandler}
@@ -194,7 +193,7 @@ const SigninForm = () => {
         <div className={signinClasses['sign_up-container']}>
           <hr />
           <p>New to Tuffy Talk ?</p>
-          <NavLink className={signinClasses['sign_up-link']} to='/signup'>
+          <NavLink className={signinClasses['sign_up-link']} to="/signup">
             Create an account
           </NavLink>
         </div>

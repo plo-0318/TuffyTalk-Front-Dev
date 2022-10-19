@@ -4,9 +4,9 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 import { mainPageScrollActions } from '../../../store/mainPageScroll';
 import { postListActions } from '../../../store/postList';
-import { RESOURCE_URL } from '../../../utils/config';
 import { toCamel, camelToSpace } from '../../../utils/util';
 import CreatePostModal from './create_post_modal/CreatePostModal';
+import { deleteTempUpload } from '../../../utils/sendHttp';
 
 import classes from './CreatePost.module.css';
 import commonClasses from '../../../utils/common.module.css';
@@ -27,14 +27,7 @@ const CreatePost = () => {
 
   const [showCreatePost, setShowCreatePost] = useState(false);
 
-  let userImage;
-
-  if (user) {
-    userImage =
-      user.profilePicture === 'user-placeholder.png'
-        ? `${RESOURCE_URL}/img/users/user-placeholder.png`
-        : `${RESOURCE_URL}/img/users/${user._id}/${user.profilePicture}`;
-  }
+  const userImage = user ? user.profilePicture : null;
 
   const createPostHandler = () => {
     // dispatch(mainPageScrollActions.setDisableScroll(true));
@@ -47,11 +40,12 @@ const CreatePost = () => {
   }, []);
 
   const postSuccessHandler = useCallback(
-    (url) => {
+    async (url) => {
       // dispatch(mainPageScrollActions.setDisableScroll(false));
       dispatch(mainPageScrollActions.resetScrollPosition());
       dispatch(postListActions.increase());
       closeCreatePost();
+      await deleteTempUpload();
       navigate(url, { replace: true });
     },
     [closeCreatePost, navigate, dispatch]
@@ -71,7 +65,7 @@ const CreatePost = () => {
       )}
       {isAuthenticated ? (
         <div className={classes['create_post-container']}>
-          <img src={userImage} alt='User' />
+          <img src={userImage} alt="User" />
           <button
             onClick={createPostHandler}
           >{`Share something in ${camelToSpace(

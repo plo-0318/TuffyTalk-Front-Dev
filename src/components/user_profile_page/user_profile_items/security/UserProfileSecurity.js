@@ -50,7 +50,6 @@ const UserProfileSecurity = () => {
 
     const submitOptions = {
       path: '/user-actions/update-my-password',
-      useProxy: false,
       options: {
         method: 'PATCH',
         credentials: 'include',
@@ -125,9 +124,9 @@ const UserProfileSecurity = () => {
       <form className={profileClasses['form-container']}>
         <InputField
           _ref={passwordRef}
-          _id='password'
-          label='Current Password'
-          type='password'
+          _id="password"
+          label="Current Password"
+          type="password"
           placeholder={'current password'}
           error={inputErrors.password}
         />
@@ -135,18 +134,18 @@ const UserProfileSecurity = () => {
         <div className={classes['new_passwords-container']}>
           <InputField
             _ref={newPasswordRef}
-            _id='newPassword'
-            label='New Password'
-            type='password'
+            _id="newPassword"
+            label="New Password"
+            type="password"
             placeholder={'new password'}
             error={inputErrors.newPassword}
           />
 
           <InputField
             _ref={confirmNewPasswordRef}
-            _id='confirmNewPassword'
-            label='Confirm New Password'
-            type='password'
+            _id="confirmNewPassword"
+            label="Confirm New Password"
+            type="password"
             placeholder={'confirm new password'}
             error={inputErrors.confirmNewPassword}
           />

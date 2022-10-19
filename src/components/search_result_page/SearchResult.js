@@ -36,7 +36,6 @@ const SearchResult = () => {
     if (searchTerm !== '') {
       fetchPosts({
         path: `/posts/search?term=${searchTerm}`,
-        useProxy: false,
       });
     }
 

@@ -25,7 +25,7 @@ const MainPage = (props) => {
 
   useEffect(() => {
     if (topic !== null) {
-      sendRequest({ path: `/posts?topic=${topic._id}`, useProxy: false });
+      sendRequest({ path: `/posts?topic=${topic._id}` });
     }
   }, [topic, sendRequest]);
 

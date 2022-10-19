@@ -15,7 +15,6 @@ const Comments = (props) => {
   useEffect(() => {
     sendRequest({
       path: `/comments?fromPost=${postId}&parentComment=`,
-      useProxy: false,
     });
   }, [sendRequest, postId]);
 

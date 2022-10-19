@@ -43,7 +43,7 @@ const UserInfo = () => {
 
   // Loading majors from backend
   useEffect(() => {
-    fetchMajors({ path: '/majors', useProxy: false });
+    fetchMajors({ path: '/majors' });
   }, [fetchMajors]);
 
   // Submitting user changes
@@ -76,7 +76,6 @@ const UserInfo = () => {
 
     const submitOptions = {
       path: '/user-actions/update-me',
-      useProxy: false,
       options: {
         method: 'PATCH',
         credentials: 'include',
@@ -155,16 +154,16 @@ const UserInfo = () => {
           <form className={profileClasses['form-container']}>
             <InputField
               _ref={usernameRef}
-              _id='username'
-              label='Username'
-              type='text'
+              _id="username"
+              label="Username"
+              type="text"
               placeholder={user.username}
               error={inputErrors.username}
             />
 
             <SelectField
-              _id='major'
-              label='Major'
+              _id="major"
+              label="Major"
               options={getMajorOptions()}
               user={user}
               onMajorChange={majorChangeHandler}

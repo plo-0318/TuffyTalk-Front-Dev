@@ -101,14 +101,30 @@ const ModalOverlay = (props) => {
       images.push(img[1]);
     }
 
-    const names = images.map((img) => {
-      const name = img.split('/');
+    let newContent = editorContent;
 
-      return name[name.length - 1];
+    const names = images.map((img) => {
+      const split = img.split('/');
+      const name = split[split.length - 1];
+
+      if (!isEdit) {
+        return name;
+      }
+
+      if (editData.blobToId[name]) {
+        newContent = newContent.replace(
+          editData.blobToId[name].imgUrl,
+          editData.blobToId[name].id
+        );
+
+        return editData.blobToId[name].id;
+      }
+
+      return name;
     });
 
     const body = {
-      content: editorContent,
+      content: newContent,
       images: names,
       fromPost: params.postId,
     };
@@ -123,7 +139,6 @@ const ModalOverlay = (props) => {
     if (!isEdit) {
       submitOptions = {
         path: '/user-actions/create-comment',
-        useProxy: false,
         options: {
           method: 'POST',
           credentials: 'include',
@@ -138,7 +153,6 @@ const ModalOverlay = (props) => {
     else {
       submitOptions = {
         path: `/user-actions/update-comment/${editData.commentId}`,
-        useProxy: false,
         options: {
           method: 'PATCH',
           credentials: 'include',
@@ -183,7 +197,6 @@ const ModalOverlay = (props) => {
         <hr />
 
         <TextEditor
-          useProxy={false}
           submitHandler={editorSubmitHandler}
           onChange={editorChangeHandler}
           onEditorReady={editorReadyHandler}

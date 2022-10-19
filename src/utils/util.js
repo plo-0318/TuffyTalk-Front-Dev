@@ -1,3 +1,5 @@
+import userImg from '../img/placeholder/user-placeholder.png';
+
 // computerScience -> Computer Science
 export const camelToSpace = (topic) => {
   let transformedTopic = topic;
@@ -44,4 +46,30 @@ export const toCamel = (word, separator) => {
 // computerScience -> computer-science
 export const camelToDash = (word) => {
   return camelToSpace(word).toLowerCase().split(' ').join('-');
+};
+
+export const createImageUrlFromBuffer = (buffer, type = 'image/webp') => {
+  const blob = new Blob([Int8Array.from(buffer)], {
+    type,
+  });
+
+  return window.URL.createObjectURL(blob);
+};
+
+export const getUserImg = (user) => {
+  if (!user) {
+    return userImg;
+  }
+
+  if (
+    !user.profilePicture.data ||
+    user.profilePicture.name === 'user-placeholder.png'
+  ) {
+    return userImg;
+  }
+
+  return createImageUrlFromBuffer(
+    user.profilePicture.data.data,
+    user.profilePicture.type
+  );
 };

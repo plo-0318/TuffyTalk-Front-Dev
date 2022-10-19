@@ -45,7 +45,7 @@ function App() {
   } = useHttp(loginWithJWT);
 
   useEffect(() => {
-    loginJWT(false);
+    loginJWT();
   }, [loginJWT]);
 
   useEffect(() => {
@@ -81,21 +81,21 @@ function App() {
           <NavBar />
           <Routes>
             <Route
-              path='/'
-              element={<Navigate replace to='/topic/general' />}
+              path="/"
+              element={<Navigate replace to="/topic/general" />}
             />
-            <Route path='/topic/:topicName' element={<MainPage />}>
-              <Route path='post/:postId' element={<PostDetail />} />
+            <Route path="/topic/:topicName" element={<MainPage />}>
+              <Route path="post/:postId" element={<PostDetail />} />
             </Route>
-            <Route path='/signup' element={<Signup />} />
-            <Route path='/signin' element={<SigninForm />} />
-            <Route path='/me/:tab' element={<UserProfile />}>
-              <Route path=':postId' element={<PostDetail />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/signin" element={<SigninForm />} />
+            <Route path="/me/:tab" element={<UserProfile />}>
+              <Route path=":postId" element={<PostDetail />} />
             </Route>
-            <Route path='/search/:searchTerm' element={<SearchResult />}>
-              <Route path='post/:postId' element={<PostDetail />} />
+            <Route path="/search/:searchTerm" element={<SearchResult />}>
+              <Route path="post/:postId" element={<PostDetail />} />
             </Route>
-            <Route path='*' element={<ErrorPage />} />
+            <Route path="*" element={<ErrorPage />} />
           </Routes>
         </Fragment>
       )}

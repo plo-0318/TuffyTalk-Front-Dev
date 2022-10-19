@@ -4,7 +4,12 @@ import { useEffect, useState } from 'react';
 
 import useHttp from '../../../hooks/use-http';
 import { sendHttp } from '../../../utils/sendHttp';
-import { API_URL, PROXY_API_URL, RESOURCE_URL } from '../../../utils/config';
+import {
+  API_URL,
+  PROXY_API_URL,
+  RESOURCE_URL,
+  USE_PROXY,
+} from '../../../utils/config';
 
 import './Editor.css';
 
@@ -17,7 +22,6 @@ const TextEditor = (props) => {
     return () => {
       const submitOptions = {
         path: '/user-actions/delete-temp-upload',
-        useProxy: false,
         options: {
           method: 'DELETE',
           credentials: 'include',
@@ -43,7 +47,7 @@ const TextEditor = (props) => {
               body,
             };
 
-            const url = props.useProxy ? PROXY_API_URL : API_URL;
+            const url = USE_PROXY ? PROXY_API_URL : API_URL;
 
             fetch(`${url}/user-actions/post-image`, options)
               .then((res) => res.json())
@@ -94,7 +98,7 @@ const TextEditor = (props) => {
         onFocus={(event, editor) => {}}
         onChange={changeHandler}
       />
-      <button className='editor_submit-btn' onClick={props.submitHandler}>
+      <button className="editor_submit-btn" onClick={props.submitHandler}>
         Submit
       </button>
     </div>

@@ -44,7 +44,7 @@ const TopicList = (props) => {
   }, []);
 
   useEffect(() => {
-    sendRequest({ path: '/topics?sort=name', useProxy: false });
+    sendRequest({ path: '/topics?sort=name' });
   }, [sendRequest]);
 
   const { onLoadTopic } = props;
@@ -188,7 +188,7 @@ const TopicList = (props) => {
                             <img
                               className={classes['dropdown_topic-img']}
                               src={`${RESOURCE_URL}/img/topics/${topic.icon}`}
-                              alt='topic'
+                              alt="topic"
                             />
                             {topicName}
                           </NavLink>
@@ -229,7 +229,7 @@ const TopicList = (props) => {
                             <img
                               className={classes['dropdown_topic-img']}
                               src={`${RESOURCE_URL}/img/topics/${topic.icon}`}
-                              alt='topic'
+                              alt="topic"
                             />
                             {topicName}
                           </NavLink>
@@ -270,7 +270,7 @@ const TopicList = (props) => {
                             <img
                               className={classes['dropdown_topic-img']}
                               src={`${RESOURCE_URL}/img/topics/${topic.icon}`}
-                              alt='topic'
+                              alt="topic"
                             />
                             {topicName}
                           </NavLink>

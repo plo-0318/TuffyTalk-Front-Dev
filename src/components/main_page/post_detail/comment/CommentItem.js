@@ -3,13 +3,19 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import parse from 'html-react-parser';
 
+import LoadingSpinner from '../../../ui/loading_spinner/LoadingSpinner';
 import ConfirmModal from '../../../ui/modal/ConfirmModal';
 import LeaveCommentModal from '../comment_box/LeaveCommentModal';
 import Modal from '../../../ui/modal/Modal';
 import useHttp from '../../../../hooks/use-http';
-import { sendHttp } from '../../../../utils/sendHttp';
+import {
+  sendHttp,
+  deleteTempUpload,
+  getImageBuffer,
+} from '../../../../utils/sendHttp';
+import { createImageUrlFromBuffer, getUserImg } from '../../../../utils/util';
 import { UilThumbsUp } from '@iconscout/react-unicons';
-import { RESOURCE_URL } from '../../../../utils/config';
+import { USE_PROXY, API_URL, PROXY_API_URL } from '../../../../utils/config';
 import { postListActions } from '../../../../store/postList';
 
 import classes from './CommentItem.module.css';
@@ -20,7 +26,7 @@ const CommentDeleted = () => {
     <Fragment>
       <div className={classes['comment_header-container']}>
         <div className={classes['left']}>
-          <img src={userPlaceholderImg} alt='user' />
+          <img src={userPlaceholderImg} alt="user" />
           <p>Deleted</p>
         </div>
       </div>
@@ -58,6 +64,9 @@ const CommentContent = (props) => {
   const [commentModalData, setCommentModalData] = useState({});
   const [confirmModalState, setConfirmModalState] = useState({});
 
+  const [blobToId, setBlobToId] = useState({});
+  const [readyToRender, setReadyToRender] = useState(false);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -85,6 +94,55 @@ const CommentContent = (props) => {
   }, [commentData, user]);
 
   useEffect(() => {
+    const loadImg = async () => {
+      const _blobToId = {};
+
+      if (commentData.images.length > 0) {
+        const re = /<img[^>]+src="([^">]+)/g;
+        let img;
+        const images = [];
+        while ((img = re.exec(commentData.content))) {
+          images.push(img[1]);
+        }
+
+        if (images.length > 0) {
+          const url = USE_PROXY ? PROXY_API_URL : API_URL;
+
+          for (img of images) {
+            const split = img.split('/');
+            const id = split[split.length - 1];
+
+            // const res = await fetch(`${url}/images/${id}`);
+            // const data = await res.json();
+
+            const data = await getImageBuffer(url, id);
+
+            // const blob = new Blob([Int8Array.from(data.data.data)], {
+            //   type: data.type,
+            // });
+            // const imgUrl = window.URL.createObjectURL(blob);
+
+            const imgUrl = createImageUrlFromBuffer(data.data.data, data.type);
+
+            const imgUrlSplit = imgUrl.split('/');
+            const blobName = imgUrlSplit[imgUrlSplit.length - 1];
+
+            _blobToId[blobName] = { id, imgUrl };
+
+            commentData.content = commentData.content.replace(`${id}`, imgUrl);
+          }
+        }
+
+        setBlobToId(_blobToId);
+      }
+
+      setReadyToRender(true);
+    };
+
+    loadImg();
+  }, [commentData]);
+
+  useEffect(() => {
     if (deleteCommentStatus === 'completed') {
       if (deleteCommentError) {
         setModalState({
@@ -108,10 +166,7 @@ const CommentContent = (props) => {
     dispatch,
   ]);
 
-  const userImg =
-    commentData.author.profilePicture === 'user-placeholder.png'
-      ? `${RESOURCE_URL}/img/users/user-placeholder.png`
-      : `${RESOURCE_URL}/img/users/${commentData.author._id}/${commentData.author.profilePicture}`;
+  const userImg = getUserImg(commentData.author);
 
   const likeClickHandler = () => {
     if (!user) {
@@ -130,7 +185,6 @@ const CommentContent = (props) => {
 
     const submitOptions = {
       path: `/user-actions/toggle-like-comment/${commentData._id}`,
-      useProxy: false,
       options: {
         method: 'PATCH',
         credentials: 'include',
@@ -167,7 +221,7 @@ const CommentContent = (props) => {
     setCommentModalData({
       isEdit: true,
       onEditorReady: (editor) => editor.setData(commentData.content),
-      editData: { commentId: commentData._id },
+      editData: { commentId: commentData._id, blobToId },
     });
 
     setShowCommentModal(true);
@@ -195,7 +249,6 @@ const CommentContent = (props) => {
 
     const options = {
       path: `/user-actions/delete-comment/${commentData._id}`,
-      useProxy: false,
       options: {
         method: 'DELETE',
         credentials: 'include',
@@ -210,7 +263,8 @@ const CommentContent = (props) => {
     setShowCommentModal(false);
   }, []);
 
-  const commentSuccessHandler = useCallback(() => {
+  const commentSuccessHandler = useCallback(async () => {
+    await deleteTempUpload();
     navigate(0, { replace: true });
   }, [navigate]);
 
@@ -228,6 +282,10 @@ const CommentContent = (props) => {
 
   if (commentData.deleted) {
     return <CommentDeleted />;
+  }
+
+  if (!readyToRender) {
+    return <LoadingSpinner />;
   }
 
   return (
@@ -260,7 +318,7 @@ const CommentContent = (props) => {
       />
       <div className={classes['comment_header-container']}>
         <div className={classes['left']}>
-          <img src={userImg} alt='user' />
+          <img src={userImg} alt="user" />
           <p>{commentData.author.username}</p>
         </div>
         <div className={classes['right']}>
@@ -332,7 +390,6 @@ const CommentItem = (props) => {
       // Load child comments
       await sendRequest({
         path: `/comments?parentComment=${comment._id}`,
-        useProxy: false,
       });
     }
 

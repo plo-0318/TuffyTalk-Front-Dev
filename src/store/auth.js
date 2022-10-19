@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { getUserImg } from '../utils/util';
 
 const inititalAuthState = {
   isAuthenticated: false,
@@ -16,6 +17,11 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
     },
     setUser(state, action) {
+      if (action.payload) {
+        const userImg = getUserImg(action.payload);
+        action.payload.profilePicture = userImg;
+      }
+
       state.user = action.payload;
     },
   },

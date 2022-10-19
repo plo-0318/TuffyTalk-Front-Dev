@@ -1,11 +1,10 @@
-import { UilSearch, UilSetting, UilBars } from '@iconscout/react-unicons';
+import { UilSearch, UilBars } from '@iconscout/react-unicons';
 import { useNavigate, NavLink } from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import { Fragment, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { CSSTransition } from 'react-transition-group';
 
-import { RESOURCE_URL } from '../../utils/config';
 import useHttp from '../../hooks/use-http';
 import { logout } from '../../utils/sendHttp';
 import { authActions } from '../../store/auth';
@@ -164,13 +163,13 @@ const Menu = (props) => {
 const AuthLinks = (props) => (
   <ul className={classes['nav_links-container']}>
     <li>
-      <NavLink to='/signin' className={classes['nav_link']}>
+      <NavLink to="/signin" className={classes['nav_link']}>
         Sign in
       </NavLink>
     </li>
     <li>
       <NavLink
-        to='/signup'
+        to="/signup"
         className={`${classes['nav_link']} ${classes['nav_link__signup']}`}
       >
         Sign up
@@ -185,24 +184,21 @@ const AuthLinks = (props) => (
 const UserLinks = (props) => {
   const navigate = useNavigate();
 
-  const userImg =
-    props.user.profilePicture === 'user-placeholder.png'
-      ? `${RESOURCE_URL}/img/users/user-placeholder.png`
-      : `${RESOURCE_URL}/img/users/${props.user._id}/${props.user.profilePicture}`;
+  const userImage = props.user.profilePicture;
 
   return (
     <ul className={classes['nav_links-container']}>
       <li className={classes['user_img-container']}>
         <img
-          src={userImg}
-          alt='user'
+          src={userImage}
+          alt="user"
           onClick={() => {
             navigate('/me/profile');
           }}
         />
       </li>
       <li className={classes['user_link-container']}>
-        <NavLink className={classes['user_link']} to='/me/profile'>
+        <NavLink className={classes['user_link']} to="/me/profile">
           {props.user.username}
         </NavLink>
       </li>
@@ -229,7 +225,7 @@ const NavBar = () => {
   } = useHttp(logout);
 
   const logoutHandler = () => {
-    _logout(false);
+    _logout();
     dispatch(authActions.setUser(null));
     dispatch(authActions.logout());
     navigate('/', { replace: true });
@@ -255,13 +251,13 @@ const NavBar = () => {
           navigate('/', { replace: false });
         }}
       >
-        <img src={logo} alt='logo of the website.' />
+        <img src={logo} alt="logo of the website." />
       </div>
       <div className={classes['search_bar-container']}>
         <input
           ref={searchInputRef}
-          type='text'
-          placeholder='Search...'
+          type="text"
+          placeholder="Search..."
           className={classes['search_bar-input']}
         />
         <div

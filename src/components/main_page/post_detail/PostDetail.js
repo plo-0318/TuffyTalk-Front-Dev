@@ -11,7 +11,12 @@ import Modal from '../../ui/modal/Modal';
 import LeaveComment from './comment_box/LeaveComment';
 import Comments from './comment/Comments';
 import useHttp from '../../../hooks/use-http';
-import { sendHttp } from '../../../utils/sendHttp';
+import {
+  sendHttp,
+  deleteTempUpload,
+  getImageBuffer,
+} from '../../../utils/sendHttp';
+import { createImageUrlFromBuffer, getUserImg } from '../../../utils/util';
 import LoadingSpinner from '../../ui/loading_spinner/LoadingSpinner';
 import { authActions } from '../../../store/auth';
 import { currentPostActions } from '../../../store/currentPost';
@@ -19,7 +24,12 @@ import { mainPageScrollActions } from '../../../store/mainPageScroll';
 import { postListActions } from '../../../store/postList';
 import { searchActions } from '../../../store/search';
 import { userProfileDataActions } from '../../../store/userProfileData';
-import { RESOURCE_URL } from '../../../utils/config';
+import {
+  RESOURCE_URL,
+  API_URL,
+  PROXY_API_URL,
+  USE_PROXY,
+} from '../../../utils/config';
 import {
   UilThumbsUp,
   UilCommentDots,
@@ -53,7 +63,6 @@ const Backdrop = (props) => {
     if (props.userLikePostChanged) {
       const submitOptions = {
         path: `/user-actions/toggle-like-post/${props.postId}`,
-        useProxy: false,
         options: {
           method: 'PATCH',
           credentials: 'include',
@@ -114,6 +123,7 @@ const PostModal = memo((props) => {
     message: '',
   });
   const [confirmModalState, setConfirmModalState] = useState(false);
+  const [blobToId, setBlobToId] = useState({});
 
   const navigate = useNavigate();
 
@@ -135,7 +145,7 @@ const PostModal = memo((props) => {
 
   // Load the post detail and comments from backend
   useEffect(() => {
-    fetchPostDetail({ path: `/posts/${postId}`, useProxy: false });
+    fetchPostDetail({ path: `/posts/${postId}` });
   }, [fetchPostDetail, postId]);
 
   // After successfuly fetched post detail
@@ -143,25 +153,65 @@ const PostModal = memo((props) => {
   // Use the plcaeholder user profile pic
   // Then allow render
   useEffect(() => {
-    if (postStatus === 'completed' && !postError) {
-      const userImg =
-        postData.author.profilePicture === 'user-placeholder.png'
-          ? `${RESOURCE_URL}/img/users/user-placeholder.png`
-          : `${RESOURCE_URL}/img/users/${postData.author._id}/${postData.author.profilePicture}`;
+    const updateData = async () => {
+      if (postStatus === 'completed' && !postError) {
+        const userImg = getUserImg(postData.author);
 
-      postData.author.userImg = userImg;
-      postData.createdAt = new Date(postData.createdAt).toLocaleDateString();
+        postData.author.userImg = userImg;
+        postData.createdAt = new Date(postData.createdAt).toLocaleDateString();
 
-      setPostLikes(postData.likes.length);
+        const re = /<img[^>]+src="([^">]+)/g;
+        let img;
+        const images = [];
+        while ((img = re.exec(postData.content))) {
+          images.push(img[1]);
+        }
 
-      if (user) {
-        const userLikedPost = postData.likes.includes(user._id);
-        setUserLike(userLikedPost);
-        setIsAuthor(postData.author._id === user._id);
+        const _blobToId = {};
+
+        if (images.length > 0) {
+          const url = USE_PROXY ? PROXY_API_URL : API_URL;
+
+          for (img of images) {
+            const split = img.split('/');
+            const id = split[split.length - 1];
+
+            // const res = await fetch(`${url}/images/${id}`);
+            // const data = await res.json();
+
+            const data = await getImageBuffer(url, id);
+
+            // const blob = new Blob([Int8Array.from(data.data.data)], {
+            //   type: data.type,
+            // });
+
+            // const imgUrl = window.URL.createObjectURL(blob);
+
+            const imgUrl = createImageUrlFromBuffer(data.data.data, data.type);
+
+            const imgUrlSplit = imgUrl.split('/');
+            const blobName = imgUrlSplit[imgUrlSplit.length - 1];
+
+            _blobToId[blobName] = { id, imgUrl };
+
+            postData.content = postData.content.replace(`${id}`, imgUrl);
+          }
+        }
+
+        setBlobToId(_blobToId);
+        setPostLikes(postData.likes.length);
+
+        if (user) {
+          const userLikedPost = postData.likes.includes(user._id);
+          setUserLike(userLikedPost);
+          setIsAuthor(postData.author._id === user._id);
+        }
+
+        setUpdatedPostData(true);
       }
+    };
 
-      setUpdatedPostData(true);
-    }
+    updateData();
   }, [postStatus, postError, postData, user]);
 
   // Update the page after user toggled bookmark
@@ -248,7 +298,6 @@ const PostModal = memo((props) => {
 
     const fetchOptions = {
       path: '/user-actions/toggle-bookmark',
-      useProxy: false,
       options: {
         method: 'PATCH',
         credentials: 'include',
@@ -316,7 +365,6 @@ const PostModal = memo((props) => {
 
     const options = {
       path: `/user-actions/delete-post/${postData._id}`,
-      useProxy: false,
       options: {
         method: 'DELETE',
         credentials: 'include',
@@ -343,7 +391,8 @@ const PostModal = memo((props) => {
     }
   };
 
-  const editSuccessHandler = useCallback(() => {
+  const editSuccessHandler = useCallback(async () => {
+    await deleteTempUpload();
     navigate(0, { replace: true });
   }, [navigate]);
 
@@ -381,6 +430,7 @@ const PostModal = memo((props) => {
           editData={{
             title: postData.title,
             postId: postData._id,
+            blobToId,
           }}
           onSuccess={editSuccessHandler}
         />
@@ -394,7 +444,7 @@ const PostModal = memo((props) => {
           <Fragment>
             <div className={classes['post_detail-container']}>
               <div className={classes['user_info-container']}>
-                <img src={postData.author.userImg} alt='user' />
+                <img src={postData.author.userImg} alt="user" />
                 <p>{postData.author.username}</p>
               </div>
 

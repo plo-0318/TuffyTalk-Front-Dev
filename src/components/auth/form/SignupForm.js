@@ -13,6 +13,7 @@ import {
 import useHttp from '../../../hooks/use-http';
 import { sendHttp } from '../../../utils/sendHttp';
 import Modal from '../../ui/modal/Modal';
+import { USE_PROXY } from '../../../utils/config';
 
 import classes from './SignupForm.module.css';
 import commonClasses from '../../../utils/common.module.css';
@@ -178,7 +179,6 @@ const SignupForm = () => {
 
     const submitOptions = {
       path: '/users/signup',
-      useProxy: false,
       options: {
         method: 'POST',
         credentials: 'include',
@@ -221,8 +221,8 @@ const SignupForm = () => {
           >
             <input
               className={usernameError ? classes['input_error'] : ''}
-              type='text'
-              placeholder='Your username'
+              type="text"
+              placeholder="Your username"
               value={usernameInput}
               onChange={usernameChangeHandler}
               onBlur={usernameBlurHandler}
@@ -239,8 +239,8 @@ const SignupForm = () => {
           >
             <input
               className={emailError ? classes['input_error'] : ''}
-              type='email'
-              placeholder='Your email'
+              type="email"
+              placeholder="Your email"
               value={emailInput}
               onChange={emailChangeHandler}
               onBlur={emailBlurHandler}
@@ -257,8 +257,8 @@ const SignupForm = () => {
           >
             <input
               className={passwordError ? classes['input_error'] : ''}
-              type='password'
-              placeholder='Your password'
+              type="password"
+              placeholder="Your password"
               value={passwordInput}
               onChange={passwordChangeHandler}
               onBlur={passwordBlurHandler}
@@ -275,8 +275,8 @@ const SignupForm = () => {
           >
             <input
               value={confirmPassword}
-              type='password'
-              placeholder='Confirm your password'
+              type="password"
+              placeholder="Confirm your password"
               onChange={confirmPasswordChangeHandler}
             />
             {confirmPasswordError && <p>Passwords do not match</p>}
@@ -294,7 +294,7 @@ const SignupForm = () => {
         </div>
         <div className={classes['sign_in-container']}>
           <p>Have an account ?</p>
-          <NavLink className={classes['sign_in-link']} to='/signin'>
+          <NavLink className={classes['sign_in-link']} to="/signin">
             Sign in
           </NavLink>
         </div>

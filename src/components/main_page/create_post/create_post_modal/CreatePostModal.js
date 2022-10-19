@@ -23,6 +23,7 @@ const ModalOverlay = (props) => {
     editData,
     onSuccess,
     topic,
+    blobToId,
   } = props;
   const navigate = useNavigate();
 
@@ -127,16 +128,32 @@ const ModalOverlay = (props) => {
       images.push(img[1]);
     }
 
-    const names = images.map((img) => {
-      const name = img.split('/');
+    let newPostContent = postContent;
 
-      return name[name.length - 1];
+    const names = images.map((img) => {
+      const split = img.split('/');
+      const name = split[split.length - 1];
+
+      if (!isEdit) {
+        return name;
+      }
+
+      if (editData.blobToId[name]) {
+        newPostContent = newPostContent.replace(
+          editData.blobToId[name].imgUrl,
+          editData.blobToId[name].id
+        );
+
+        return editData.blobToId[name].id;
+      }
+
+      return name;
     });
 
     const body = JSON.stringify({
       topic: topic || null,
       title,
-      content: postContent,
+      content: newPostContent,
       images: names,
     });
 
@@ -146,7 +163,6 @@ const ModalOverlay = (props) => {
     if (!isEdit) {
       submitOptions = {
         path: '/user-actions/create-post',
-        useProxy: false,
         options: {
           method: 'POST',
           credentials: 'include',
@@ -161,7 +177,6 @@ const ModalOverlay = (props) => {
     else {
       submitOptions = {
         path: `/user-actions/update-post/${editData.postId}`,
-        useProxy: false,
         options: {
           method: 'PATCH',
           credentials: 'include',
@@ -206,10 +221,10 @@ const ModalOverlay = (props) => {
         <hr />
         <form className={classes['modal-form']}>
           <div className={classes['title_input-container']}>
-            <label htmlFor='title'>Title</label>
+            <label htmlFor="title">Title</label>
             <input
-              id='title'
-              type='text'
+              id="title"
+              type="text"
               className={`${classes['title-input']}`}
               value={titleInput}
               onChange={(e) => {
@@ -218,7 +233,6 @@ const ModalOverlay = (props) => {
             />
           </div>
           <TextEditor
-            useProxy={false}
             submitHandler={postSubmitHandler}
             onChange={postChangeHandler}
             onEditorReady={editorReadyHandler}

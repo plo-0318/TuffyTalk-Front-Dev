@@ -30,7 +30,7 @@ const BookmarkItem = (props) => {
       <div className={classes['bookmark_item__header-container']}>
         <img
           src={`${RESOURCE_URL}/img/topics/${post.topic.icon}`}
-          alt='topic'
+          alt="topic"
         />
         <p className={classes['bookmark_item__topic-text']}>
           {camelToSpace(post.topic.name)}
@@ -87,7 +87,6 @@ const UserProfilePosts = (props) => {
 
     fetchPosts({
       path,
-      useProxy: false,
       options: {
         method: 'GET',
         credentials: 'include',

@@ -174,7 +174,6 @@ const Posts = (props) => {
 
     fetchPosts({
       path: `/posts?topic=${topic._id}&page=${currentPage}&limit=${postLimit}&${sortBy}`,
-      useProxy: false,
     });
 
     // Resetting the page number when user switch topic

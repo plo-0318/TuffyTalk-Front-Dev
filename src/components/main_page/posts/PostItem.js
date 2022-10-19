@@ -2,7 +2,7 @@ import { useEffect, memo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { RESOURCE_URL } from '../../../utils/config';
+import { API_URL, PROXY_API_URL, USE_PROXY } from '../../../utils/config';
 import { currentPostActions } from '../../../store/currentPost';
 import { mainPageScrollActions } from '../../../store/mainPageScroll';
 import {
@@ -10,18 +10,23 @@ import {
   UilCommentDots,
   UilBookmark,
 } from '@iconscout/react-unicons';
+import { getUserImg } from '../../../utils/util';
 
 import classes from './PostItem.module.css';
+import placeholderImg from '../../../img/placeholder/topic-placeholder.png';
 
 const PostItem = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { post: propsPost } = props;
 
   const [postData, setPostData] = useState({
     ...props.post,
     likes: props.post.likes.length,
     createdAt: new Date(props.post.createdAt).toLocaleDateString(),
   });
+  const [postImg, setPostImg] = useState(placeholderImg);
 
   const {
     postData: postStateData,
@@ -30,6 +35,43 @@ const PostItem = (props) => {
   } = useSelector((state) => state.currentPost);
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const loadImg = async () => {
+      if (propsPost.images.length <= 0) {
+        return;
+      }
+
+      const re = /<img[^>]+src="([^">]+)/g;
+      let img;
+      const images = [];
+      while ((img = re.exec(propsPost.content))) {
+        images.push(img[1]);
+      }
+
+      if (images.length > 0) {
+        const url = USE_PROXY ? PROXY_API_URL : API_URL;
+
+        const split = images[0].split('/');
+        const id = split[split.length - 1];
+
+        const res = await fetch(`${url}/images/${id}`);
+        if (!res.ok) {
+          return;
+        }
+
+        const data = await res.json();
+
+        const blob = new Blob([Int8Array.from(data.data.data)], {
+          type: data.type,
+        });
+
+        setPostImg(window.URL.createObjectURL(blob));
+      }
+    };
+
+    loadImg();
+  }, [propsPost]);
 
   useEffect(() => {
     if (postStateId === postData._id && shouldUpdate) {
@@ -45,9 +87,9 @@ const PostItem = (props) => {
     hasImage ? '' : classes['title_content-container__no_img']
   }`;
 
-  const postImg = hasImage
-    ? `${RESOURCE_URL}/img/users/${postData.author._id}/posts/${postData._id}/${postData.images[0]}`
-    : null;
+  // const postImg = hasImage
+  //   ? `${RESOURCE_URL}/img/users/${postData.author._id}/posts/${postData._id}/${postData.images[0]}`
+  //   : null;
 
   const postClickHandler = () => {
     // dispatch(mainPageScrollActions.setDisableScroll(true));
@@ -55,10 +97,7 @@ const PostItem = (props) => {
     navigate(`${location.pathname}/post/${postData._id}`);
   };
 
-  const userImg =
-    postData.author.profilePicture === 'user-placeholder.png'
-      ? `${RESOURCE_URL}/img/users/user-placeholder.png`
-      : `${RESOURCE_URL}/img/users/${postData.author._id}/${postData.author.profilePicture}`;
+  const userImg = getUserImg(postData.author);
 
   const pRegex = /(<p>).+?(>)/s;
   const liRegex = /(<li>).+?(>)/s;
@@ -87,7 +126,7 @@ const PostItem = (props) => {
     <div className={classes['post-container']} onClick={postClickHandler}>
       <div className={classes['header-container']}>
         <div className={classes['header__picture_name-container']}>
-          <img src={userImg} alt='user' />
+          <img src={userImg} alt="user" />
           <p className={classes['username']}>{postData.author.username}</p>
         </div>
         <p>{postData.createdAt}</p>
@@ -111,7 +150,7 @@ const PostItem = (props) => {
         </div>
         {hasImage && (
           <div className={classes['post_img-container']}>
-            <img src={postImg} alt='post' />
+            <img src={postImg} alt="post" />
           </div>
         )}
       </div>

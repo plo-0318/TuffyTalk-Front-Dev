@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { UilPlus } from '@iconscout/react-unicons';
 
 import { authActions } from '../../store/auth';
-import { RESOURCE_URL } from '../../utils/config';
 import useHttp from '../../hooks/use-http';
 import { sendHttp } from '../../utils/sendHttp';
 import UserInfo from './user_profile_items/profile/UserInfo';
@@ -92,7 +91,6 @@ const UserProfile = () => {
 
     const submitOptions = {
       path: '/user-actions/update-me',
-      useProxy: false,
       options: {
         method: 'PATCH',
         credentials: 'include',
@@ -104,10 +102,7 @@ const UserProfile = () => {
     setModalState({ show: true, status: 'pending', message: '' });
   };
 
-  const userImg =
-    user.profilePicture === 'user-placeholder.png'
-      ? `${RESOURCE_URL}/img/users/user-placeholder.png`
-      : `${RESOURCE_URL}/img/users/${user._id}/${user.profilePicture}`;
+  const userImg = user.profilePicture;
 
   const closeModal = () => {
     setModalState((prevState) => {
@@ -132,16 +127,16 @@ const UserProfile = () => {
       >
         <div className={classes['user_profile-container__left']}>
           <div className={classes['user_img-container']}>
-            <img src={userImg} alt='user' />
+            <img src={userImg} alt="user" />
             <div className={classes['change_profile_pic-container']}>
-              <label htmlFor='profile-pic'>
+              <label htmlFor="profile-pic">
                 <UilPlus className={classes['change_procile_pic-icon']} />
               </label>
               <input
-                id='profile-pic'
-                type='file'
-                name='profile-picture'
-                accept='image/*'
+                id="profile-pic"
+                type="file"
+                name="profile-picture"
+                accept="image/*"
                 onChange={profilePicChangeHandler}
               />
             </div>
