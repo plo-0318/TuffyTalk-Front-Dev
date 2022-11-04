@@ -24,8 +24,45 @@
   transition: all 0.3s;
 }
 
+.editor_submit-btn__disabled {
+  background-color: #999;
+}
+
 .editor_submit-btn:hover {
   background-color: #28467a;
+}
+
+.editor_submit-btn__disabled:hover {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
+.btn_loading_spinner {
+  width: 1.6rem;
+  height: 1.6rem;
+
+  border-radius: 50%;
+  background-color: transparent;
+
+  border: 3px solid #10316b;
+  border-color: transparent;
+  border-left-color: #10316b;
+
+  animation: btn_spinnerSpin 0.75s linear forwards;
+  animation-iteration-count: infinite;
+}
+
+@keyframes btn_spinnerSpin {
+  from {
+    border-color: transparent;
+    border-left-color: #10316b;
+  }
+
+  to {
+    transform: rotate(-360deg);
+    border-color: transparent;
+    border-left-color: #10316b;
+  }
 }
 
 .editor-container .ck-editor__editable {
