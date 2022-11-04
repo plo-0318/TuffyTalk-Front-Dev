@@ -294,6 +294,10 @@
 
   .title-text {
     font-size: 1.2rem;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .content-text {
