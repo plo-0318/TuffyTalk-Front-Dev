@@ -30,7 +30,7 @@ const LeaveComment = (props) => {
 
   const commentSuccessHandler = useCallback(
     async (url) => {
-      dispatch(postListActions.increase());
+      dispatch(postListActions.tick());
       await deleteTempUpload();
       navigate(0, { replace: true });
     },
@@ -50,7 +50,7 @@ const LeaveComment = (props) => {
         <div
           className={`${boxClasses['create_post-container']} ${classes['leave_comment-container']}`}
         >
-          <img src={userImage} alt="User" />
+          <img src={userImage} alt='User' />
           <button onClick={leaveCommentHandler}>{`Leave a comment...`}</button>
         </div>
       ) : (

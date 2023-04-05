@@ -64,7 +64,7 @@ const Backdrop = (props) => {
       const submitOptions = {
         path: `/user-actions/toggle-like-post/${props.postId}`,
         options: {
-          method: 'PATCH',
+          method: 'POST',
           credentials: 'include',
         },
       };
@@ -95,7 +95,7 @@ const PostModal = memo((props) => {
 
   const {
     sendRequest: toggleBookmark,
-    data: userData,
+    data: bookmarkData,
     status: toggleBookmarkStatus,
     error: toggleBookmarkError,
     resetState: resetToggleBookmark,
@@ -109,7 +109,7 @@ const PostModal = memo((props) => {
   } = useHttp(sendHttp, false);
 
   const [updatedPostData, setUpdatedPostData] = useState(false);
-  const [userBookmark, setUserBookmark] = useState(false);
+  const [userHasBookmarkedPost, setUserHasBookmarkedPost] = useState(false);
 
   const [userLike, setUserLike] = useState(null);
   const [postLikes, setPostLikes] = useState(0);
@@ -128,20 +128,29 @@ const PostModal = memo((props) => {
   const navigate = useNavigate();
 
   const user = useSelector((state) => state.auth.user);
+  const userLikedPosts = useSelector((state) => state.auth.likedPosts);
+  const userBookmarks = useSelector((state) => state.auth.bookmarks);
   const dispatch = useDispatch();
 
+  // TODO: CHANGE TO NEW WAY OF FINDING BOOKMARKS
   // Check if user has bookmarked this page
   useEffect(() => {
     if (user) {
-      const hasBookmark = user.bookmarks.includes(postId);
+      let bookmarkedThisPost = false;
 
-      if (userBookmark === hasBookmark) {
+      if (user.bookmarks) {
+        bookmarkedThisPost = user.bookmarks.includes(postId);
+      } else {
+        bookmarkedThisPost = userBookmarks.includes(postId);
+      }
+
+      if (userHasBookmarkedPost === bookmarkedThisPost) {
         return;
       }
 
-      setUserBookmark(hasBookmark);
+      setUserHasBookmarkedPost(bookmarkedThisPost);
     }
-  }, [user, postId, userBookmark]);
+  }, [user, postId, userHasBookmarkedPost, userBookmarks]);
 
   // Load the post detail and comments from backend
   useEffect(() => {
@@ -149,12 +158,13 @@ const PostModal = memo((props) => {
   }, [fetchPostDetail, postId]);
 
   // After successfuly fetched post detail
-  // Format the post create time
+  // Format the post created time
   // Use the plcaeholder user profile pic
   // Then allow render
   useEffect(() => {
     const updateData = async () => {
       if (postStatus === 'completed' && !postError) {
+        // Get the post author image (converted from buffer to url already)
         const userImg = getUserImg(postData.author);
 
         postData.author.userImg = userImg;
@@ -173,36 +183,48 @@ const PostModal = memo((props) => {
           const url = USE_PROXY ? PROXY_API_URL : API_URL;
 
           for (img of images) {
+            // Example img = 6364d82601df8500169cabcb
             const split = img.split('/');
             const id = split[split.length - 1];
 
-            // const res = await fetch(`${url}/images/${id}`);
-            // const data = await res.json();
-
+            // Fetch the image buffer
             const data = await getImageBuffer(url, id);
 
-            // const blob = new Blob([Int8Array.from(data.data.data)], {
-            //   type: data.type,
-            // });
-
-            // const imgUrl = window.URL.createObjectURL(blob);
-
+            // Example imgUrl = http://localhost:3000/e1829b74-b39c-4696-9eb6-b83ee0f14b62
             const imgUrl = createImageUrlFromBuffer(data.data.data, data.type);
 
+            // Getting the blob name
             const imgUrlSplit = imgUrl.split('/');
             const blobName = imgUrlSplit[imgUrlSplit.length - 1];
 
+            // Saving the image id and the generated imgUrl
             _blobToId[blobName] = { id, imgUrl };
 
             postData.content = postData.content.replace(`${id}`, imgUrl);
           }
         }
 
+        //TODO: CHANGE ALL POST TO USE postData.numLikes INSTEAD OF postData.likes.length
         setBlobToId(_blobToId);
-        setPostLikes(postData.likes.length);
+        setPostLikes(
+          postData.likes ? postData.likes.length : postData.numLikes
+        );
 
+        //TODO: CHANGE ALL POSTS TO FIND COMMENTS
+        postData.numComments = postData.comments
+          ? postData.comments.length
+          : postData.numComments;
+
+        // TODO: CHANGE ALL POST TO USE THE NEW WAY TO FIND LIKES
         if (user) {
-          const userLikedPost = postData.likes.includes(user._id);
+          let userLikedPost = false;
+
+          if (postData.likes) {
+            userLikedPost = postData.likes.includes(user._id);
+          } else {
+            userLikedPost = userLikedPosts.includes(postData._id);
+          }
+
           setUserLike(userLikedPost);
           setIsAuthor(postData.author._id === user._id);
         }
@@ -212,30 +234,61 @@ const PostModal = memo((props) => {
     };
 
     updateData();
-  }, [postStatus, postError, postData, user]);
+  }, [postStatus, postError, postData, user, userLikedPosts]);
 
+  // TODO: CHANGE THIS TO UPDATE THE USER BOOKMARKS
   // Update the page after user toggled bookmark
   useEffect(() => {
     if (toggleBookmarkStatus === 'completed' && !toggleBookmarkError) {
-      setUserBookmark((prevState) => !prevState);
+      setUserHasBookmarkedPost((prevState) => !prevState);
 
-      const updatedUser = { ...userData };
+      // const updatedUser = { ...userData };
+
+      // resetToggleBookmark();
+      // dispatch(authActions.setUser(updatedUser));
+
+      // Clone the user bookmarks
+      let newBookmarks;
+
+      // User is un-bookmarking this post, remove this post from user bookmarks
+      if (userHasBookmarkedPost) {
+        newBookmarks = userBookmarks.filter(
+          (bookmark) => bookmark.post !== postId
+        );
+      }
+      // User is bookmarking this post, add this post to user bookmarks
+      else {
+        newBookmarks = [
+          ...userBookmarks,
+          { post: bookmarkData.post, createdAt: bookmarkData.postCreatedAt },
+        ];
+      }
 
       resetToggleBookmark();
-      dispatch(authActions.setUser(updatedUser));
+      dispatch(authActions.setBookmarks(newBookmarks));
     }
   }, [
     toggleBookmarkStatus,
     resetToggleBookmark,
     toggleBookmarkError,
-    userData,
+    bookmarkData,
     dispatch,
+    userBookmarks,
+    userHasBookmarkedPost,
+    postId,
   ]);
 
+  //TODO: CHANGE THIS
   // Check if user has changed like post or not
   useEffect(() => {
     if (postStatus === 'completed' && updatedPostData && userLike !== null) {
-      const changed = userLike !== postData.likes.includes(user._id);
+      let changed = false;
+
+      if (postData.likes) {
+        changed = userLike !== postData.likes.includes(user._id);
+      } else {
+        changed = userLike !== userLikedPosts.includes(postData._id);
+      }
 
       setUserLikeChanged(changed);
     }
@@ -246,6 +299,7 @@ const PostModal = memo((props) => {
     user,
     setUserLikeChanged,
     updatedPostData,
+    userLikedPosts,
   ]);
 
   // If author deleted post, go back to previous page
@@ -259,13 +313,14 @@ const PostModal = memo((props) => {
       // dispatch(mainPageScrollActions.setDisableScroll(false));
 
       if (basePath.startsWith('/topic')) {
-        dispatch(postListActions.increase());
+        dispatch(postListActions.tick());
       }
 
       if (basePath.startsWith('/search')) {
         dispatch(searchActions.tick());
       }
 
+      //TODO: PROB CHANGE THIS
       if (basePath.startsWith('/me')) {
         dispatch(userProfileDataActions.removePost(postData));
       }
@@ -296,13 +351,21 @@ const PostModal = memo((props) => {
       return;
     }
 
+    // const fetchOptions = {
+    //   path: '/user-actions/toggle-bookmark',
+    //   options: {
+    //     method: 'PATCH',
+    //     credentials: 'include',
+    //     body: JSON.stringify({ postId }),
+    //     headers: { 'Content-Type': 'application/json' },
+    //   },
+    // };
+
     const fetchOptions = {
-      path: '/user-actions/toggle-bookmark',
+      path: `/user-actions/toggle-bookmark/${postId}`,
       options: {
-        method: 'PATCH',
+        method: 'POST',
         credentials: 'include',
-        body: JSON.stringify({ postId }),
-        headers: { 'Content-Type': 'application/json' },
       },
     };
 
@@ -444,7 +507,7 @@ const PostModal = memo((props) => {
           <Fragment>
             <div className={classes['post_detail-container']}>
               <div className={classes['user_info-container']}>
-                <img src={postData.author.userImg} alt="user" />
+                <img src={postData.author.userImg} alt='user' />
                 <p>{postData.author.username}</p>
               </div>
 
@@ -483,11 +546,11 @@ const PostModal = memo((props) => {
                   <UilCommentDots
                     className={`${classes['post_footer__icon']} ${classes['post_footer__icon__inactive']}`}
                   />
-                  <p>{postData.comments.length}</p>
+                  <p>{postData.numComments}</p>
 
                   <UilBookmark
                     className={
-                      userBookmark
+                      userHasBookmarkedPost
                         ? classes['post_footer__icon']
                         : `${classes['post_footer__icon']} ${classes['post_footer__icon__inactive']}`
                     }

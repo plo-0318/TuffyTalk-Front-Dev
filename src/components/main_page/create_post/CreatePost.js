@@ -43,7 +43,7 @@ const CreatePost = () => {
     async (url) => {
       // dispatch(mainPageScrollActions.setDisableScroll(false));
       dispatch(mainPageScrollActions.resetScrollPosition());
-      dispatch(postListActions.increase());
+      dispatch(postListActions.tick());
       closeCreatePost();
       await deleteTempUpload();
       navigate(url, { replace: true });
@@ -65,7 +65,7 @@ const CreatePost = () => {
       )}
       {isAuthenticated ? (
         <div className={classes['create_post-container']}>
-          <img src={userImage} alt="User" />
+          <img src={userImage} alt='User' />
           <button
             onClick={createPostHandler}
           >{`Share something in ${camelToSpace(

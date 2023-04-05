@@ -4,6 +4,8 @@ import { getUserImg } from '../utils/util';
 const inititalAuthState = {
   isAuthenticated: false,
   user: null,
+  bookmarks: null,
+  likedPosts: null,
 };
 
 const authSlice = createSlice({
@@ -17,12 +19,24 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
     },
     setUser(state, action) {
+      const user = action.payload ? { ...action.payload } : null;
+
       if (action.payload) {
         const userImg = getUserImg(action.payload);
-        action.payload.profilePicture = userImg;
+        user.profilePicture = userImg;
       }
 
-      state.user = action.payload;
+      state.user = user;
+    },
+    setBookmarks(state, action) {
+      state.bookmarks = Array.isArray(action.payload)
+        ? [...action.payload]
+        : null;
+    },
+    setLikedPosts(state, action) {
+      state.likedPosts = Array.isArray(action.payload)
+        ? [...action.payload]
+        : null;
     },
   },
 });

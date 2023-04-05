@@ -64,6 +64,7 @@ const useHttp = (requestFn, startWithPending = true) => {
     dispatch({ type: 'RESET', status: startWithPending ? 'pending' : null });
   }, [startWithPending]);
 
+  // {sendRequest, status, data, error, resetState}
   return { sendRequest, ...httpState, resetState };
 };
 

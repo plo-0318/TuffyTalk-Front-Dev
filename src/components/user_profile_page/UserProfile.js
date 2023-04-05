@@ -127,16 +127,16 @@ const UserProfile = () => {
       >
         <div className={classes['user_profile-container__left']}>
           <div className={classes['user_img-container']}>
-            <img src={userImg} alt="user" />
+            <img src={userImg} alt='user' />
             <div className={classes['change_profile_pic-container']}>
-              <label htmlFor="profile-pic">
+              <label htmlFor='profile-pic'>
                 <UilPlus className={classes['change_procile_pic-icon']} />
               </label>
               <input
-                id="profile-pic"
-                type="file"
-                name="profile-picture"
-                accept="image/*"
+                id='profile-pic'
+                type='file'
+                name='profile-picture'
+                accept='image/*'
                 onChange={profilePicChangeHandler}
               />
             </div>

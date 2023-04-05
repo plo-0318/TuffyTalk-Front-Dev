@@ -6,7 +6,7 @@ const postListSlice = createSlice({
   name: 'postList',
   initialState,
   reducers: {
-    increase: (state) => {
+    tick: (state) => {
       state.counter = state.counter + 1;
     },
 

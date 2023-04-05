@@ -163,13 +163,13 @@ const Menu = (props) => {
 const AuthLinks = (props) => (
   <ul className={classes['nav_links-container']}>
     <li>
-      <NavLink to="/signin" className={classes['nav_link']}>
+      <NavLink to='/signin' className={classes['nav_link']}>
         Sign in
       </NavLink>
     </li>
     <li>
       <NavLink
-        to="/signup"
+        to='/signup'
         className={`${classes['nav_link']} ${classes['nav_link__signup']}`}
       >
         Sign up
@@ -191,14 +191,14 @@ const UserLinks = (props) => {
       <li className={classes['user_img-container']}>
         <img
           src={userImage}
-          alt="user"
+          alt='user'
           onClick={() => {
             navigate('/me/profile');
           }}
         />
       </li>
       <li className={classes['user_link-container']}>
-        <NavLink className={classes['user_link']} to="/me/profile">
+        <NavLink className={classes['user_link']} to='/me/profile'>
           {props.user.username}
         </NavLink>
       </li>
@@ -227,6 +227,8 @@ const NavBar = () => {
   const logoutHandler = () => {
     _logout();
     dispatch(authActions.setUser(null));
+    dispatch(authActions.setBookmarks(null));
+    dispatch(authActions.setLikedPosts(null));
     dispatch(authActions.logout());
     navigate('/', { replace: true });
   };
@@ -251,13 +253,13 @@ const NavBar = () => {
           navigate('/', { replace: false });
         }}
       >
-        <img src={logo} alt="logo of the website." />
+        <img src={logo} alt='logo of the website.' />
       </div>
       <div className={classes['search_bar-container']}>
         <input
           ref={searchInputRef}
-          type="text"
-          placeholder="Search..."
+          type='text'
+          placeholder='Search...'
           className={classes['search_bar-input']}
         />
         <div

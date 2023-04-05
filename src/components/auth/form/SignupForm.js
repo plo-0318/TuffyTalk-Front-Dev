@@ -11,9 +11,9 @@ import {
   passwordValidateArr,
 } from '../../../utils/utilValidate';
 import useHttp from '../../../hooks/use-http';
+import useFetchUserData from '../../../hooks/use-fetchUserData';
 import { sendHttp } from '../../../utils/sendHttp';
 import Modal from '../../ui/modal/Modal';
-import { USE_PROXY } from '../../../utils/config';
 
 import classes from './SignupForm.module.css';
 import commonClasses from '../../../utils/common.module.css';
@@ -28,10 +28,14 @@ const SignupForm = () => {
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
   const [submitError, setSubmitError] = useState({});
 
-  const { sendRequest, status, data, resetState, error } = useHttp(
-    sendHttp,
-    false
-  );
+  const {
+    sendRequest: sendSignUpRequest,
+    status: signUpStatus,
+    data: userData,
+    resetState: resetSignUpState,
+    error: signUpError,
+  } = useHttp(sendHttp, false);
+  const [fetchUserData, fetchUserDataCompleted] = useFetchUserData();
 
   const [modalState, setModalState] = useState({
     show: false,
@@ -74,19 +78,21 @@ const SignupForm = () => {
     setConfirmPasswordError(false);
   };
 
+  // When form is submitted, check for errors
+  // If no error --> sign up and sign in
   useEffect(() => {
-    if (error) {
-      setSubmitError({ show: true, status: 'fail', message: error });
+    if (signUpStatus !== 'completed') {
+      return;
+    }
+
+    if (signUpError) {
+      setSubmitError({ show: true, status: 'fail', message: signUpError });
 
       return;
     }
 
-    if (status !== 'completed') {
-      return;
-    }
-
-    if (data.status !== 'success') {
-      if (!data.errorData) {
+    if (userData.status !== 'success') {
+      if (!userData.errorData) {
         setSubmitError({
           show: true,
           status: 'fail',
@@ -96,8 +102,8 @@ const SignupForm = () => {
         return;
       }
 
-      const field = data.errorData.field.toLowerCase();
-      const msg = data.errorData.message;
+      const field = userData.errorData.field.toLowerCase();
+      const msg = userData.errorData.message;
 
       if (field === 'username') {
         setSubmitError({
@@ -132,26 +138,32 @@ const SignupForm = () => {
         passwordSetIsSubmit(true);
       }
 
-      resetState();
+      resetSignUpState();
       return;
     }
 
     dispatch(authActions.login());
-    dispatch(authActions.setUser(data.data.user));
-    resetState();
-    navigate('/');
+    dispatch(authActions.setUser(userData.data.user));
+
+    fetchUserData();
   }, [
-    status,
-    error,
-    data,
-    resetState,
+    signUpStatus,
+    signUpError,
+    userData,
+    resetSignUpState,
     setSubmitError,
     emailSetIsSubmit,
     passwordSetIsSubmit,
     usernameSetIsSubmit,
     dispatch,
-    navigate,
+    fetchUserData,
   ]);
+
+  useEffect(() => {
+    if (fetchUserDataCompleted) {
+      navigate('/');
+    }
+  }, [fetchUserDataCompleted, navigate]);
 
   const isValid =
     usernameIsValid &&
@@ -162,7 +174,7 @@ const SignupForm = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
 
-    if (!isValid || status === 'pending') {
+    if (!isValid || signUpStatus === 'pending') {
       return;
     }
 
@@ -188,14 +200,14 @@ const SignupForm = () => {
       forAuth: true,
     };
 
-    sendRequest(submitOptions);
+    sendSignUpRequest(submitOptions);
   };
 
   const closeModal = () => {
     setModalState((prevState) => {
       return { ...prevState, show: false };
     });
-    resetState();
+    resetSignUpState();
   };
 
   return (
@@ -221,8 +233,8 @@ const SignupForm = () => {
           >
             <input
               className={usernameError ? classes['input_error'] : ''}
-              type="text"
-              placeholder="Your username"
+              type='text'
+              placeholder='Your username'
               value={usernameInput}
               onChange={usernameChangeHandler}
               onBlur={usernameBlurHandler}
@@ -239,8 +251,8 @@ const SignupForm = () => {
           >
             <input
               className={emailError ? classes['input_error'] : ''}
-              type="email"
-              placeholder="Your email"
+              type='email'
+              placeholder='Your email'
               value={emailInput}
               onChange={emailChangeHandler}
               onBlur={emailBlurHandler}
@@ -257,8 +269,8 @@ const SignupForm = () => {
           >
             <input
               className={passwordError ? classes['input_error'] : ''}
-              type="password"
-              placeholder="Your password"
+              type='password'
+              placeholder='Your password'
               value={passwordInput}
               onChange={passwordChangeHandler}
               onBlur={passwordBlurHandler}
@@ -275,8 +287,8 @@ const SignupForm = () => {
           >
             <input
               value={confirmPassword}
-              type="password"
-              placeholder="Confirm your password"
+              type='password'
+              placeholder='Confirm your password'
               onChange={confirmPasswordChangeHandler}
             />
             {confirmPasswordError && <p>Passwords do not match</p>}
@@ -294,7 +306,7 @@ const SignupForm = () => {
         </div>
         <div className={classes['sign_in-container']}>
           <p>Have an account ?</p>
-          <NavLink className={classes['sign_in-link']} to="/signin">
+          <NavLink className={classes['sign_in-link']} to='/signin'>
             Sign in
           </NavLink>
         </div>

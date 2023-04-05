@@ -10,6 +10,7 @@ import {
   emailValidateArr,
 } from '../../../utils/utilValidate';
 import useHttp from '../../../hooks/use-http';
+import useFetchUserData from '../../../hooks/use-fetchUserData';
 import { sendHttp } from '../../../utils/sendHttp';
 import Modal from '../../ui/modal/Modal';
 
@@ -23,10 +24,14 @@ const SigninForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { sendRequest, status, data, resetState, error } = useHttp(
-    sendHttp,
-    false
-  );
+  const {
+    sendRequest: sendSignInRequest,
+    status: signInStatus,
+    data: signInData,
+    resetState: resetSignInState,
+    error: signInError,
+  } = useHttp(sendHttp, false);
+  const [fetchUserData, fetchUserDataCompleted] = useFetchUserData();
 
   const [submitError, setSubmitError] = useState({});
 
@@ -58,47 +63,55 @@ const SigninForm = () => {
   const isValid = emailIsValid && passwordIsValid;
 
   useEffect(() => {
-    if (error) {
-      setSubmitError({ show: true, status: 'fail', message: error });
+    if (signInStatus !== 'completed') {
+      return;
+    }
+
+    if (signInError) {
+      setSubmitError({ show: true, status: 'fail', message: signInError });
 
       return;
     }
 
-    if (status === 'completed' && !error) {
-      if (data.status !== 'success') {
-        setSubmitError({
-          emailError: {
-            error: true,
-            msg: data.message,
-          },
-        });
+    if (signInData.status !== 'success') {
+      setSubmitError({
+        emailError: {
+          error: true,
+          msg: signInData.message,
+        },
+      });
 
-        emailSetIsSubmit(true);
-        resetState();
+      emailSetIsSubmit(true);
+      resetSignInState();
 
-        return;
-      }
-
-      dispatch(authActions.login());
-      dispatch(authActions.setUser(data.data.user));
-      resetState();
-      navigate('/');
+      return;
     }
+
+    dispatch(authActions.login());
+    dispatch(authActions.setUser(signInData.data.user));
+
+    fetchUserData();
   }, [
-    status,
-    error,
-    data,
-    resetState,
+    signInStatus,
+    signInError,
+    signInData,
+    resetSignInState,
     setSubmitError,
     emailSetIsSubmit,
     dispatch,
-    navigate,
+    fetchUserData,
   ]);
+
+  useEffect(() => {
+    if (fetchUserDataCompleted) {
+      navigate('/');
+    }
+  }, [fetchUserDataCompleted, navigate]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
 
-    if (!isValid || status === 'pending') {
+    if (!isValid || signInStatus === 'pending') {
       return;
     }
 
@@ -118,14 +131,14 @@ const SigninForm = () => {
       forAuth: true,
     };
 
-    sendRequest(submitOptions);
+    sendSignInRequest(submitOptions);
   };
 
   const closeModal = () => {
     setModalState((prevState) => {
       return { ...prevState, show: false };
     });
-    resetState();
+    resetSignInState();
   };
 
   return (
@@ -150,8 +163,8 @@ const SigninForm = () => {
           >
             <input
               className={emailError ? signupClasses['input_error'] : ''}
-              type="email"
-              placeholder="Your email"
+              type='email'
+              placeholder='Your email'
               value={emailInput}
               onChange={emailChangeHandler}
               onBlur={emailBlurHandler}
@@ -168,8 +181,8 @@ const SigninForm = () => {
           >
             <input
               className={passwordError ? signupClasses['input_error'] : ''}
-              type="password"
-              placeholder="Your password"
+              type='password'
+              placeholder='Your password'
               value={passwordInput}
               onChange={passwordChangeHandler}
               onBlur={passwordBlurHandler}
@@ -185,7 +198,9 @@ const SigninForm = () => {
             className={`${signupClasses['form_submit-btn']} ${
               !isValid ? signupClasses['form_submit-btn__disable'] : ''
             }`}
-            disabled={!emailIsValid || !passwordIsValid || status === 'pending'}
+            disabled={
+              !emailIsValid || !passwordIsValid || signInStatus === 'pending'
+            }
           >
             Sign in
           </button>
@@ -193,7 +208,7 @@ const SigninForm = () => {
         <div className={signinClasses['sign_up-container']}>
           <hr />
           <p>New to Tuffy Talk ?</p>
-          <NavLink className={signinClasses['sign_up-link']} to="/signup">
+          <NavLink className={signinClasses['sign_up-link']} to='/signup'>
             Create an account
           </NavLink>
         </div>

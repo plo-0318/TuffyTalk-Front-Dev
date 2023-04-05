@@ -1,4 +1,4 @@
-import { useState, useEffect, memo, Fragment } from 'react';
+import { useState, useEffect, memo, Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import LoadingSpinner from '../../ui/loading_spinner/LoadingSpinner';
 import { useSearchParams } from 'react-router-dom';
@@ -111,8 +111,28 @@ const PageButtons = (props) => {
 };
 
 const PostsContent = memo((props) => {
-  const user = useSelector((state) => state.auth.user);
   const { postData } = props;
+
+  const user = useSelector((state) => state.auth.user);
+  const userBookmarks = useSelector((state) => state.auth.bookmarks);
+
+  const likedPosts = useSelector((state) => state.auth.likedPosts);
+
+  // TODO: CHANGE THE BOOKMARK HANDLING
+  const hasBookmark = useCallback(
+    (id) => {
+      if (!user) {
+        return false;
+      }
+
+      if (user.bookmarks) {
+        return user.bookmarks.includes(id);
+      }
+
+      return userBookmarks.includes(id);
+    },
+    [user, userBookmarks]
+  );
 
   const contentNoPosts = (
     <div className={classes['no_content-container']}>
@@ -123,11 +143,7 @@ const PostsContent = memo((props) => {
 
   const contentHavePosts = postData.map((post) => {
     return (
-      <PostItem
-        key={post._id}
-        post={post}
-        bookmark={user ? user.bookmarks.includes(post._id) : false}
-      />
+      <PostItem key={post._id} post={post} bookmark={hasBookmark(post._id)} />
     );
   });
 

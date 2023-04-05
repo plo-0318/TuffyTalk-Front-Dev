@@ -21,9 +21,13 @@ const PostItem = (props) => {
 
   const { post: propsPost } = props;
 
+  // TODO: CHANGE ALL POST TO USE numComments INSTEAD OF comments.length
   const [postData, setPostData] = useState({
     ...props.post,
-    likes: props.post.likes.length,
+    likes: props.post.numLikes,
+    numComments: props.post.comments
+      ? props.post.comments.length
+      : props.post.numComments,
     createdAt: new Date(props.post.createdAt).toLocaleDateString(),
   });
   const [postImg, setPostImg] = useState(placeholderImg);
@@ -36,6 +40,7 @@ const PostItem = (props) => {
 
   const dispatch = useDispatch();
 
+  // If there are images in the post, set the image cover for this post
   useEffect(() => {
     const loadImg = async () => {
       if (propsPost.images.length <= 0) {
@@ -73,11 +78,14 @@ const PostItem = (props) => {
     loadImg();
   }, [propsPost]);
 
+  // If the post data has changed update this post item
   useEffect(() => {
     if (postStateId === postData._id && shouldUpdate) {
       setPostData((prevState) => {
         return { ...prevState, ...postStateData };
       });
+
+      // Reset the current post state after updating this post item
       dispatch(currentPostActions.resetState());
     }
   }, [postStateData, postStateId, shouldUpdate, postData, dispatch]);
@@ -110,9 +118,13 @@ const PostItem = (props) => {
 
   if (p) {
     content = p[0];
+
+    // <p>content</p> --> remove the p tags
     content = content.slice(3, -4);
   } else if (li) {
     content = li[0];
+
+    // <li></li> --> remove the li tags
     content = content.slice(4, -5);
   }
 
@@ -126,7 +138,7 @@ const PostItem = (props) => {
     <div className={classes['post-container']} onClick={postClickHandler}>
       <div className={classes['header-container']}>
         <div className={classes['header__picture_name-container']}>
-          <img src={userImg} alt="user" />
+          <img src={userImg} alt='user' />
           <p className={classes['username']}>{postData.author.username}</p>
         </div>
         <p>{postData.createdAt}</p>
@@ -142,7 +154,7 @@ const PostItem = (props) => {
             <UilThumbsUp className={classes['footer-icon']} />
             <p>{postData.likes}</p>
             <UilCommentDots className={classes['footer-icon']} />
-            <p>{postData.comments.length}</p>
+            <p>{postData.numComments}</p>
             {props.bookmark && (
               <UilBookmark className={classes['footer-icon']} />
             )}
@@ -150,7 +162,7 @@ const PostItem = (props) => {
         </div>
         {hasImage && (
           <div className={classes['post_img-container']}>
-            <img src={postImg} alt="post" />
+            <img src={postImg} alt='post' />
           </div>
         )}
       </div>

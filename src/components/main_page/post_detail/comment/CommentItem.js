@@ -26,7 +26,7 @@ const CommentDeleted = () => {
     <Fragment>
       <div className={classes['comment_header-container']}>
         <div className={classes['left']}>
-          <img src={userPlaceholderImg} alt="user" />
+          <img src={userPlaceholderImg} alt='user' />
           <p>Deleted</p>
         </div>
       </div>
@@ -154,7 +154,7 @@ const CommentContent = (props) => {
         return;
       }
 
-      dispatch(postListActions.increase());
+      dispatch(postListActions.tick());
       resetDeleteComment();
       navigate(0, { replace: true });
     }
@@ -318,7 +318,7 @@ const CommentContent = (props) => {
       />
       <div className={classes['comment_header-container']}>
         <div className={classes['left']}>
-          <img src={userImg} alt="user" />
+          <img src={userImg} alt='user' />
           <p>{commentData.author.username}</p>
         </div>
         <div className={classes['right']}>
