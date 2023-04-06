@@ -188,6 +188,10 @@ const Posts = (props) => {
   useEffect(() => {
     const sortBy = sort === 'new' ? 'sort=-createdAt,_id' : 'sort=numLikes,_id';
 
+    console.log(
+      `/posts?topic=${topic._id}&page=${currentPage}&limit=${postLimit}&${sortBy}`
+    );
+
     fetchPosts({
       path: `/posts?topic=${topic._id}&page=${currentPage}&limit=${postLimit}&${sortBy}`,
     });
