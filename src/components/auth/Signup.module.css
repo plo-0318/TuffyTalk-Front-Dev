@@ -36,9 +36,11 @@
   margin-top: 4.8rem;
 }
 
-.general_link-container img {
+.general_link-container > img {
   width: 4rem;
   height: auto;
+
+  border-radius: 50%;
 }
 
 .nav_link:link,

@@ -1,4 +1,4 @@
-export const PRODUCTION = true;
+export const PRODUCTION = false;
 export const RESOURCE_URL = PRODUCTION
   ? 'https://tuffytalk.herokuapp.com'
   : 'http://127.0.0.1:5000';
