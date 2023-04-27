@@ -17,6 +17,7 @@ import './Editor.css';
 
 const TextEditor = (props) => {
   const { sendRequest: deleteTempUpload } = useHttp(sendHttp);
+  const [canSubmit, setCanSubmit] = useState(true);
 
   useEffect(() => {
     return () => {
@@ -49,9 +50,13 @@ const TextEditor = (props) => {
 
             const url = USE_PROXY ? PROXY_API_URL : API_URL;
 
+            console.log('what');
+            setCanSubmit(false);
+
             fetch(`${url}/user-actions/post-image`, options)
               .then((res) => res.json())
               .then((data) => {
+                setCanSubmit(true);
                 resolve({
                   default: `${RESOURCE_URL}/${data.path}`,
                 });
@@ -73,6 +78,7 @@ const TextEditor = (props) => {
 
   const changeHandler = (event, editor) => {
     props.onChange(editor.getData());
+    console.log(event.source._events);
   };
 
   return (
@@ -98,8 +104,14 @@ const TextEditor = (props) => {
         onFocus={(event, editor) => {}}
         onChange={changeHandler}
       />
-      <button className="editor_submit-btn" onClick={props.submitHandler}>
-        Submit
+      <button
+        className={`editor_submit-btn ${
+          canSubmit ? '' : 'editor_submit-btn__disabled'
+        }`}
+        onClick={props.submitHandler}
+        disabled={!canSubmit}
+      >
+        {canSubmit ? 'Submit' : <div className='btn_loading_spinner' />}
       </button>
     </div>
   );

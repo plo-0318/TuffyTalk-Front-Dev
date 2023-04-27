@@ -210,6 +210,11 @@
 
   .title-text {
     font-size: 1.6rem;
+
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .content-text {
